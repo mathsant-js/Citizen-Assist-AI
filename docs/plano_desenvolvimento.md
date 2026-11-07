@@ -46,6 +46,7 @@ Estimativa inicial de 10 dias úteis de trabalho, ajustável à data da discipli
 
 Os arquivos, resultados de verificação e o convite para participantes estão no [registro da etapa 1](etapa_1.md).
 As instruções para executar o protótipo e verificar o primeiro fluxo estão no [registro da etapa 2](etapa_2.md).
+A linha de base, o notebook e as instruções de reprodução estão no [registro da etapa 3](etapa_3.md).
 
 | Etapa | Janela sugerida | Trabalho e dependências | Critério de aceite |
 | --- | --- | --- | --- |
