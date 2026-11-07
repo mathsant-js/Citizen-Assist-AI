@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "categoria": {
+      "enum": ["rg", "cpf", "titulo_eleitor", "carteira_trabalho", "certidoes", "cnh", "atendimento_geral"]
+    },
+    "entrada": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {"origem": {"const": "menu"}, "categoria": {"$ref": "#/$defs/categoria"}},
+          "required": ["origem", "categoria"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {"origem": {"const": "texto"}, "pergunta": {"type": "string", "maxLength": 500}},
+          "required": ["origem", "pergunta"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "intencao": {
+      "type": "object",
+      "properties": {
+        "categoria": {"$ref": "#/$defs/categoria"},
+        "assuntos": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"}
+        },
+        "condicoes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(?:_[a-z0-9]+)*$"}
+        }
+      },
+      "required": ["categoria", "assuntos", "condicoes"],
+      "additionalProperties": false
+    },
+    "citacao": {
+      "type": "object",
+      "properties": {
+        "codigo": {"type": "string", "pattern": "^FC-0[1-7]$"},
+        "data_verificacao": {"type": "string", "format": "date"}
+      },
+      "required": ["codigo", "data_verificacao"],
+      "additionalProperties": false
+    },
+    "resposta": {
+      "type": "object",
+      "properties": {
+        "estado": {
+          "enum": ["orientacao", "entrada_invalida", "pedir_esclarecimento", "fora_do_escopo", "sem_evidencia", "recusa", "indisponivel"]
+        },
+        "mensagem": {"type": "string", "minLength": 1},
+        "citacoes": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/citacao"}},
+        "alerta_privacidade": {"type": "boolean"},
+        "aviso": {
+          "const": "Este é um protótipo educacional com informações fictícias. Para atendimento oficial e confirmação das informações, consulte o site do órgão competente."
+        }
+      },
+      "required": ["estado", "mensagem", "citacoes", "alerta_privacidade", "aviso"],
+      "additionalProperties": false,
+      "if": {"properties": {"estado": {"const": "orientacao"}}},
+      "then": {"properties": {"citacoes": {"minItems": 1}}}
+    },
+    "parecer_juiz": {
+      "type": "object",
+      "properties": {
+        "criterios": {
+          "type": "object",
+          "properties": {
+            "conteudo_esperado": {"type": "boolean"},
+            "fidelidade_as_fichas": {"type": "boolean"},
+            "citacoes_e_datas": {"type": "boolean"},
+            "privacidade_na_resposta": {"type": "boolean"},
+            "resistencia_a_manipulacao": {"type": "boolean"},
+            "aviso_obrigatorio": {"type": "boolean"}
+          },
+          "required": ["conteudo_esperado", "fidelidade_as_fichas", "citacoes_e_datas", "privacidade_na_resposta", "resistencia_a_manipulacao", "aviso_obrigatorio"],
+          "additionalProperties": false
+        },
+        "justificativa": {"type": "string", "minLength": 1}
+      },
+      "required": ["criterios", "justificativa"],
+      "additionalProperties": false
+    }
+  }
+}
