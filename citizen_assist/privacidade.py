@@ -25,6 +25,8 @@ DADO_INCERTO = re.compile(
     r"\b(?:me chamo|(?:meu|seu) nome (?:completo )?(?:é|e|:)|nome completo\s*:|"
     r"(?:nome(?: completo)? (?:da|do) [^:!?]{1,40}|nome)\s*:|"
     r"(?:moro|resido|nasci) (?:em|no|na)|(?:data de nascimento|nascid[oa])\s*[:=]|"
+    r"(?:data de nascimento(?: d[aeo] [^.!?;]{1,40}?)?|nascid[oa](?: em)?)\s+"
+    r"(?:(?:é|e)\s+)?\d{1,4}[./-]\d{1,2}[./-]\d{1,4}\b|"
     r"(?:rua|avenida|travessa|alameda|rodovia|r\.|av\.)\s+[^?!;]{1,70}\d|"
     r"(?:cep|senha|endere[cç]o|telefone|celular|e-?mail|número (?:do|de) documento)"
     r"\s*(?:[:=]|\bé\b)(?!\s*\[dado omitido\])\s*\S|"

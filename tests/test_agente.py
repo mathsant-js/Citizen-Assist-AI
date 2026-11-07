@@ -61,6 +61,31 @@ class TestAgente(unittest.TestCase):
                 self.assertEqual(self.perguntar(pergunta)["estado"], "entrada_invalida")
         self.classificador.assert_not_called()
 
+    def test_datas_de_nascimento_rotuladas_param_antes_do_grafo(self):
+        casos = (
+            "Minha data de nascimento é 12/03/1990. Posso pedir certidão pelo portal?",
+            "Data de nascimento 12-03-1990. Como peço uma certidão?",
+            "A data de nascimento da minha filha é 2014-08-17. Como solicito a certidão?",
+            "Meu filho, nascido em 9.6.2014, precisa comparecer para tirar RG?",
+        )
+        with patch.object(self.agente._fluxo, "invoke", wraps=self.agente._fluxo.invoke) as invocar:
+            for pergunta in casos:
+                with self.subTest(pergunta=pergunta):
+                    resultado = self.perguntar(pergunta)
+                    self.assertEqual(resultado["estado"], "pedir_esclarecimento")
+                    self.assertTrue(resultado["alerta_privacidade"])
+                    self.assertEqual(resultado["citacoes"], [])
+            invocar.assert_not_called()
+        self.classificador.assert_not_called()
+
+    def test_pergunta_generica_sobre_data_de_nascimento_ainda_pode_ser_classificada(self):
+        pergunta = "A data de nascimento é necessária para pedir a certidão?"
+        self.classificador.return_value = intencao("certidoes", ["documentos"])
+        resultado = self.perguntar(pergunta)
+        self.assertEqual(resultado["estado"], "orientacao")
+        self.assertFalse(resultado["alerta_privacidade"])
+        self.assertEqual(self.classificador.call_args.args[1], pergunta)
+
     def test_agendamento_e_situacao_cadastral_respondem_sem_enviar_dados(self):
         casos = [
             ("Meu CPF é 123.456.789-09. Pode ver minha situação?", "FC-02", "situação cadastral"),
