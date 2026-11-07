@@ -20,6 +20,12 @@
       ]
     },
     "intencao": {
+      "oneOf": [
+        {"$ref": "#/$defs/selecao_intencao"},
+        {"$ref": "#/$defs/estado_classificador"}
+      ]
+    },
+    "selecao_intencao": {
       "type": "object",
       "properties": {
         "categoria": {"$ref": "#/$defs/categoria"},
@@ -36,6 +42,16 @@
         }
       },
       "required": ["categoria", "assuntos", "condicoes"],
+      "additionalProperties": false
+    },
+    "estado_classificador": {
+      "type": "object",
+      "properties": {
+        "estado": {
+          "enum": ["ininteligivel", "pedir_esclarecimento", "fora_do_escopo", "sem_evidencia", "recusa", "limite_oficial"]
+        }
+      },
+      "required": ["estado"],
       "additionalProperties": false
     },
     "citacao": {

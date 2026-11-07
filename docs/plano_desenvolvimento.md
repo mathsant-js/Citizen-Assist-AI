@@ -45,6 +45,7 @@ Usar a ficha específica como referência para o procedimento e aplicar a FC-07 
 Estimativa inicial de 10 dias úteis de trabalho, ajustável à data da disciplina e à disponibilidade do grupo e dos participantes. Organizar as frentes de base e agente, interface, avaliação e documentação conforme o tamanho da equipe.
 
 Os arquivos, resultados de verificação e o convite para participantes estão no [registro da etapa 1](etapa_1.md).
+As instruções para executar o protótipo e verificar o primeiro fluxo estão no [registro da etapa 2](etapa_2.md).
 
 | Etapa | Janela sugerida | Trabalho e dependências | Critério de aceite |
 | --- | --- | --- | --- |

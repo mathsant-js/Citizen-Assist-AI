@@ -1,0 +1,57 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  color: #172941;
+  background: #f3f6f8;
+  line-height: 1.55;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+[hidden] { display: none !important; }
+header { background: #16324a; color: #fff; }
+.largura { width: min(68rem, calc(100% - 2rem)); margin-inline: auto; }
+.marca { display: flex; align-items: center; gap: .7rem; padding-block: .8rem; font-weight: 700; }
+.sinal { background: #a8ebde; color: #16324a; padding: .2rem .45rem; border-radius: .25rem; }
+.introducao { padding-block: 2rem 1.2rem; }
+.introducao p { margin: 0; }
+.etiqueta { font-size: .9rem; color: #365069; }
+h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; margin: .35rem 0; }
+h2 { font-size: 1.3rem; margin: 0 0 .85rem; }
+h3 { font-size: 1rem; margin: 0; }
+.opcoes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1rem; }
+.painel { background: #fff; border: 1px solid #cdd8e2; border-radius: .75rem; padding: clamp(1rem, 3vw, 1.6rem); }
+#menu { list-style: none; display: grid; gap: .45rem; padding: 0; margin: 0; }
+button, textarea { font: inherit; }
+button {
+  cursor: pointer;
+  min-height: 2.75rem;
+  color: #16324a;
+  background: #f0f7fa;
+  border: 1px solid #9fb6c8;
+  border-radius: .4rem;
+  padding: .45rem .75rem;
+  text-align: start;
+}
+#menu button { width: 100%; font-weight: 600; }
+button:hover { background: #e2f2f5; }
+button[aria-disabled="true"] { cursor: wait; }
+:focus-visible { outline: 3px solid #196fb0; outline-offset: 3px; }
+.privacidade { background: #e8f5f0; color: #173f34; border-radius: .3rem; padding: .6rem .75rem; margin: 0 0 .75rem; }
+label { display: block; font-weight: 650; }
+textarea { width: 100%; color: inherit; padding: .5rem; border: 1px solid #718ca0; border-radius: .4rem; resize: vertical; }
+small { display: block; color: #365069; }
+.enviar { margin-top: .6rem; background: #0c5e59; border-color: #0c5e59; color: #fff; font-weight: 650; }
+.enviar:hover { background: #084c47; }
+.exemplos { margin: .9rem 0 .35rem; font-size: .9rem; font-weight: 600; }
+.atalhos { display: flex; flex-wrap: wrap; gap: .4rem; }
+.atalhos button { font-size: .9rem; }
+#status:empty { margin: .75rem 0 0; }
+#mensagem { max-width: 72ch; overflow-wrap: anywhere; }
+#mensagem p, #mensagem ol, #mensagem ul, #citacoes { margin: .3rem 0 .8rem; }
+#fontes { border-top: 1px solid #cdd8e2; padding-top: .8rem; }
+footer { color: #365069; padding: 1.1rem 0 1.6rem; font-size: .9rem; }
+
+@media (max-width: 42rem) {
+  .opcoes { grid-template-columns: minmax(0, 1fr); }
+}

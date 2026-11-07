@@ -1,0 +1,185 @@
+"""Assuntos selecionáveis e vínculos revisados com as seções das fichas."""
+
+from .base import Indice
+
+GERAL = "atendimento_geral"
+ASSUNTOS = {
+    "rg": {
+        "custo": ("custo",),
+        "prazo": ("prazo",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos_necessarios_para_a_segunda_via",),
+        "perda_roubo_furto": ("documentos_necessarios_para_a_segunda_via",),
+        "responsavel": ("quem_pode_pedir",),
+        "procedimento": ("passo_a_passo", "documentos_necessarios_para_a_segunda_via", "onde"),
+        "local": ("onde",),
+    },
+    "cpf": {
+        "custo": ("custo",),
+        "prazo": ("prazo",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos_necessarios",),
+        "procedimento": ("passo_a_passo_pelo_portal", "custo", "agendamento"),
+        "correcao": ("custo", "onde"),
+        "local": ("onde",),
+        "situacao_cadastral": ("onde", "atencao"),
+    },
+    "titulo_eleitor": {
+        "custo": ("custo",),
+        "prazo": ("prazo",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos_necessarios",),
+        "idade_voto": ("quem_deve_ter",),
+        "procedimento": ("passo_a_passo", "documentos_necessarios"),
+        "prazo_emissao": ("passo_a_passo",),
+    },
+    "carteira_trabalho": {
+        "custo": ("custo",),
+        "prazo": ("prazo",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos_necessarios",),
+        "procedimento": ("passo_a_passo", "documentos_necessarios", "prazo"),
+    },
+    "certidoes": {
+        "custo": ("custo_e_prazo_cada_certidao",),
+        "prazo": ("custo_e_prazo_cada_certidao",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos_necessarios",),
+        "isencao": ("isencao",),
+        "terceiros": ("quem_pode_pedir",),
+        "procedimento": ("passo_a_passo", "documentos_necessarios", "custo_e_prazo_cada_certidao"),
+    },
+    "cnh": {
+        "custo": ("custo",),
+        "prazo": ("prazo",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos_necessarios",),
+        "quando_renovar": ("quando_renovar",),
+        "dirigir_vencida": ("quando_renovar",),
+        "validade": ("validade_da_cnh_renovada",),
+        "exame_medico": ("passo_a_passo", "custo", "prazo"),
+        "procedimento": ("passo_a_passo", "documentos_necessarios", "custo"),
+    },
+    GERAL: {
+        "horario": ("horario_de_atendimento_presencial",),
+        "agendamento": ("agendamento",),
+        "documentos": ("documentos",),
+        "terceiros": ("atendimento_por_terceiros",),
+        "pagamento": ("pagamento",),
+        "prioridade": ("atendimento_prioritario",),
+        "libras": ("atendimento_prioritario",),
+        "perda_roubo_furto": ("perda_roubo_ou_furto_de_documento",),
+        "privacidade": ("privacidade",),
+    },
+}
+
+COMPLEMENTOS = {
+    ("rg", "agendamento"): "agendamento",
+    ("rg", "responsavel"): "atendimento_por_terceiros",
+    ("certidoes", "terceiros"): "atendimento_por_terceiros",
+    ("cnh", "agendamento"): "agendamento",
+    ("cpf", "situacao_cadastral"): "privacidade",
+}
+CONDICOES = {
+    "rg": ("primeira_via", "segunda_via", "perda", "roubo_ou_furto", "executar_agendamento"),
+    "cpf": ("portal", "balcao"),
+    "titulo_eleitor": ("primeira_via", "segunda_via", "transferencia", "idade_70"),
+    "carteira_trabalho": ("portal", "aplicativo", "balcao"),
+    "certidoes": ("portal", "balcao", "nascimento", "casamento", "obito"),
+    "cnh": ("ate_49", "de_50_a_69", "a_partir_de_70", "executar_agendamento"),
+    GERAL: (),
+}
+
+ROTULOS = {
+    "atencao": "Atenção",
+    "atendimento_prioritario": "Atendimento prioritário",
+    "custo_e_prazo_cada_certidao": "Custo e prazo",
+    "documentos_necessarios_para_a_segunda_via": "Documentos da segunda via",
+    "documentos_necessarios": "Documentos necessários",
+    "horario_de_atendimento_presencial": "Horário de atendimento presencial",
+    "isencao": "Isenção",
+    "passo_a_passo_pelo_portal": "Passo a passo pelo portal",
+    "validade_da_cnh_renovada": "Validade da CNH renovada",
+}
+
+SEM_EVIDENCIA = (
+    "As fichas não trazem esse detalhe. Consulte o site do órgão competente para confirmar."
+)
+
+
+def recuperar(
+    indice: Indice, categoria: str, assuntos: list[str], condicoes: list[str]
+) -> dict | None:
+    """Recupera a orientação inteira ou sinaliza falta de evidência."""
+    ficha = indice.por_categoria[categoria]
+    if categoria == "titulo_eleitor" and "idade_voto" in assuntos and "idade_70" in condicoes:
+        return None
+    if categoria == "rg" and "primeira_via" in condicoes and any(
+        assunto in assuntos for assunto in ("documentos", "procedimento", "perda_roubo_furto")
+    ):
+        return None
+
+    mensagem = []
+    fontes = {}
+    secoes = {}
+    for assunto in assuntos:
+        for secao in ASSUNTOS[categoria][assunto]:
+            secoes[(categoria, secao)] = None
+        complemento = COMPLEMENTOS.get((categoria, assunto))
+        if complemento:
+            secoes[(GERAL, complemento)] = None
+    if "executar_agendamento" in condicoes:
+        mensagem.append("O assistente não realiza agendamentos. Use o portal para agendar.")
+        secoes[(GERAL, "privacidade")] = None
+    if categoria == "cpf" and "situacao_cadastral" in assuntos:
+        mensagem.append("O assistente não consulta situação cadastral. Consulte o portal da Central do Cidadão.")
+    if not assuntos:
+        mensagem.append(ficha.titulo)
+        secoes = dict.fromkeys((categoria, secao) for secao in ficha.trechos)
+        if categoria == "certidoes":
+            secoes[(GERAL, "atendimento_por_terceiros")] = None
+
+    for origem, secao in secoes:
+        fonte = indice.por_categoria.get(origem)
+        if not fonte or not fonte.data_verificacao or not fonte.trechos.get(secao):
+            return None
+        trecho = fonte.trechos[secao]
+        trecho = _focar_trecho(categoria, secao, trecho, assuntos, condicoes)
+        rotulo = ROTULOS.get(secao, secao.replace("_", " ").capitalize())
+        if origem == GERAL and origem != categoria and (categoria, secao) in secoes:
+            rotulo = f"Regra geral de {rotulo.lower()}"
+        mensagem.append(f"{rotulo}\n{trecho[0].upper()}{trecho[1:]}")
+        fontes[fonte.codigo] = {
+            "codigo": fonte.codigo,
+            "data_verificacao": fonte.data_verificacao.isoformat(),
+        }
+    return {"mensagem": "\n\n".join(mensagem), "citacoes": list(fontes.values())}
+
+
+def _focar_trecho(
+    categoria: str, secao: str, trecho: str, assuntos: list[str], condicoes: list[str]
+) -> str:
+    if categoria == "rg" and secao == "custo":
+        primeira, _, segunda = trecho.partition(". ")
+        if "primeira_via" in condicoes and "segunda_via" not in condicoes:
+            return primeira.rstrip(".") + "."
+        if "segunda_via" in condicoes and "primeira_via" not in condicoes:
+            return segunda or trecho
+    if categoria == "cpf" and secao == "custo" and "procedimento" not in assuntos:
+        portal, _, balcao = trecho.partition(". ")
+        if "portal" in condicoes and "balcao" not in condicoes:
+            return portal.rstrip(".") + "."
+        if "balcao" in condicoes and "portal" not in condicoes:
+            return balcao or trecho
+    if secao == "validade_da_cnh_renovada":
+        prefixos = {"ate_49": "- até", "de_50_a_69": "- de 50", "a_partir_de_70": "- 70"}
+        faixas = [prefixos[faixa] for faixa in condicoes if faixa in prefixos]
+        if len(faixas) == 1:
+            for linha in trecho.splitlines():
+                if linha.startswith(faixas[0]):
+                    return linha[2:].rstrip(";.") + "."
+    if secao == "atendimento_prioritario" and "libras" in assuntos and "prioridade" not in assuntos:
+        for frase in trecho.split(". "):
+            if "Libras" in frase:
+                return frase
+    return trecho

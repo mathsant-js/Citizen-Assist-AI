@@ -5,10 +5,10 @@
 | Item | Resultado |
 | --- | --- |
 | Base de referência | As sete fichas foram carregadas e verificadas com código e data de 01/10/2026. O índice preserva o texto de cada seção e permite buscar por categoria ou palavra-chave. |
-| Golden dataset | Os 26 casos foram extraídos da tabela do enunciado e conferidos campo a campo em uma segunda leitura independente. |
+| Golden dataset | Os 26 casos foram conferidos campo a campo com o enunciado `1CC-Citizen_Assist_AI(2).docx` em 07/11/2026, sem divergências de ordem, ID, mensagem, tipo, resposta esperada ou fontes. |
 | Contratos | Formatos definidos para a entrada, a intenção, a resposta e o parecer do juiz. |
-| API do chatbot | `gemma4:31b` aprovado no teste de classificação em português pela API direta do Ollama. A chamada levou 617 ms nesta execução. |
-| API do candidato a juiz | `gpt-oss:20b` aprovado no teste de identificação de um valor incorreto. A chamada levou 751 ms nesta execução. Confirmar a escolha do juiz na calibração prevista no plano. |
+| API do chatbot | `gemma4:31b` aprovado no teste de classificação em português pela API direta do Ollama em 07/11/2026. A chamada levou 623 ms. |
+| API do candidato a juiz | `gpt-oss:20b` aprovado no teste de identificação de um valor incorreto em 07/11/2026. A chamada levou 752 ms. Confirmar a escolha do juiz na calibração prevista no plano. |
 | Recrutamento | Convite preparado abaixo. O grupo precisa enviá-lo a pelo menos cinco pessoas de fora da equipe. |
 
 Os tempos são de chamadas isoladas com entradas fictícias e curtas. As medições oficiais de qualidade e usabilidade estão previstas nas etapas seguintes.
@@ -19,6 +19,12 @@ Os tempos são de chamadas isoladas com entradas fictícias e curtas. As mediç�
 - A FC-07 não tem uma seção própria de palavras-chave. O índice usa os rótulos das seções e o termo “Libras” da própria ficha. A FC-03 não esclarece a regra para quem tem exatamente 70 anos. Para esse caso, informar a lacuna e orientar a consulta ao órgão competente. [FC-07](../referencia/FC-07_regras_gerais.md) · [FC-03](../referencia/FC-03_titulo_de_eleitor.md)
 - [Golden dataset](../avaliacao/golden_dataset.json). Cada registro contém ID, mensagem, tipo, resposta esperada literal e fontes esperadas. As aspas tipográficas que delimitam a mensagem no Word foram retiradas. O identificador fictício do caso 22 fica restrito ao arquivo de avaliação e deve passar pela triagem antes de qualquer chamada ou exibição. No notebook e no relatório, usar o ID ou a mensagem mascarada.
 - A recuperação inicial usa categorias, palavras-chave e trechos. O `nomic-embed-text` local fica disponível caso os testes indiquem necessidade de busca semântica.
+
+Para repetir a conferência com a cópia local do enunciado, execute o comando abaixo na raiz do projeto. O script informa os IDs e campos divergentes sem exibir as mensagens dos casos.
+
+```powershell
+python scripts/conferir_dataset.py "C:\caminho\para\1CC-Citizen_Assist_AI(2).docx"
+```
 
 ## Contratos e limites
 
@@ -36,7 +42,7 @@ Na raiz do projeto, executar no PowerShell 7:
 ./scripts/testar_ollama.ps1
 ```
 
-O [script de verificação](../scripts/testar_ollama.ps1) lê `OLLAMA_API_KEY` do ambiente ou do `.env` da raiz. A chave deve ficar no ambiente do servidor e o `.env` está no `.gitignore`. O script envia apenas os dois exemplos fictícios e mostra modelo, duração e resultado. A API em nuvem não impõe o esquema, então o script pede JSON, aceita um bloco Markdown que contenha apenas o objeto e valida os campos do exemplo. A etapa 2 deverá aplicar os contratos completos. [Ollama Cloud](https://docs.ollama.com/cloud) · [Saídas estruturadas](https://docs.ollama.com/capabilities/structured-outputs)
+O [script de verificação](../scripts/testar_ollama.ps1) lê `OLLAMA_API_KEY` do ambiente ou do `.env` da raiz. A chave deve ficar no ambiente do servidor e o `.env` está no `.gitignore`. O script envia apenas os dois exemplos fictícios e mostra modelo, duração e resultado. A API em nuvem não impõe o esquema, então o script pede JSON, aceita um bloco Markdown que contenha apenas o objeto e valida os campos do exemplo. No protótipo, o agente valida localmente a classificação antes de usá-la. [Ollama Cloud](https://docs.ollama.com/cloud) · [Saídas estruturadas](https://docs.ollama.com/capabilities/structured-outputs)
 
 ## Convite para os testes
 

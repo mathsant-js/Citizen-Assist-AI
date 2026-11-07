@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Citizen Assist AI · Guia de documentos</title>
+  <link rel="stylesheet" href="/estilo.css">
+  <script src="/interface.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="largura marca"><span aria-hidden="true" class="sinal">CA</span> Citizen Assist AI</div>
+  </header>
+  <main class="largura">
+    <section class="introducao" aria-labelledby="titulo">
+      <p class="etiqueta">Central do Cidadão de Aurora · Protótipo educacional</p>
+      <h1 id="titulo">Guia de documentos</h1>
+      <p>Escolha um assunto ou faça uma pergunta sobre os serviços da central fictícia.</p>
+    </section>
+
+    <div class="opcoes">
+      <section class="painel" aria-labelledby="titulo-menu">
+        <h2 id="titulo-menu">Escolha um assunto</h2>
+        <ul id="menu">
+          <li><button type="button" data-categoria="rg">RG</button></li>
+          <li><button type="button" data-categoria="cpf">CPF</button></li>
+          <li><button type="button" data-categoria="titulo_eleitor">Título de eleitor</button></li>
+          <li><button type="button" data-categoria="carteira_trabalho">Carteira de Trabalho</button></li>
+          <li><button type="button" data-categoria="certidoes">Certidões</button></li>
+          <li><button type="button" data-categoria="cnh">CNH</button></li>
+          <li><button type="button" data-categoria="atendimento_geral">Atendimento geral</button></li>
+        </ul>
+      </section>
+
+      <section class="painel" aria-labelledby="titulo-pergunta">
+        <h2 id="titulo-pergunta">Faça uma pergunta</h2>
+        <form id="formulario" autocomplete="off">
+          <p id="privacidade" class="privacidade">Evite digitar nomes, números de documentos, contatos, endereços ou outros dados pessoais.</p>
+          <label for="pergunta">Sua pergunta</label>
+          <textarea id="pergunta" rows="3" maxlength="500" autocomplete="off" spellcheck="false"
+                    aria-describedby="privacidade limite"></textarea>
+          <small id="limite">Até 500 caracteres</small>
+          <button class="enviar" type="submit">Enviar pergunta</button>
+        </form>
+        <p class="exemplos">Exemplos para usar no campo</p>
+        <div class="atalhos">
+          <button type="button" data-exemplo>Quanto custa a segunda via do RG?</button>
+          <button type="button" data-exemplo>Como solicito um intérprete de Libras?</button>
+        </div>
+      </section>
+    </div>
+
+    <p id="status" role="status" aria-live="polite"></p>
+    <section id="resposta" class="painel" aria-labelledby="titulo-resposta" hidden>
+      <h2 id="titulo-resposta" tabindex="-1">Orientação</h2>
+      <p id="alerta" class="privacidade" hidden></p>
+      <div id="mensagem"></div>
+      <section id="fontes" aria-labelledby="titulo-fontes" hidden>
+        <h3 id="titulo-fontes">Fichas da Central do Cidadão de Aurora</h3>
+        <ul id="citacoes"></ul>
+      </section>
+    </section>
+    <footer id="aviso">Este é um protótipo educacional com informações fictícias. Para atendimento oficial e confirmação das informações, consulte o site do órgão competente.</footer>
+    <noscript>Ative o JavaScript para usar o menu e enviar perguntas.</noscript>
+  </main>
+</body>
+</html>
