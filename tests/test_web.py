@@ -1,4 +1,6 @@
+from contextlib import redirect_stderr, redirect_stdout
 import http.client
+from io import StringIO
 import json
 from threading import Thread
 import unittest
@@ -7,6 +9,7 @@ from unittest.mock import Mock
 from citizen_assist.agente import AVISO, Agente
 from citizen_assist.base import CATEGORIAS
 from citizen_assist.ollama import ClassificadorIndisponivel
+from citizen_assist.privacidade import MARCADOR
 from citizen_assist.web import ENDERECO, ServidorLocal
 
 
@@ -79,3 +82,36 @@ class TestWeb(unittest.TestCase):
         self.assertEqual(resposta["estado"], "entrada_invalida")
         self.assertEqual(resposta["aviso"], AVISO)
         self.classificador.assert_not_called()
+
+    def test_falhas_http_com_dado_ficticio_nao_expoem_o_conteudo(self):
+        dado = "Praça Fictícia"
+        pergunta = "Como agendo Libras?"
+        saida, erros = StringIO(), StringIO()
+        with redirect_stdout(saida), redirect_stderr(erros), self.assertNoLogs(level="DEBUG"):
+            resposta = self.consultar({
+                "origem": "texto", "pergunta": f"Meu endereço residencial é {dado}, {pergunta}",
+            })
+            self.assertEqual(resposta["estado"], "pedir_esclarecimento")
+            self.assertTrue(resposta["alerta_privacidade"])
+            self.assertNotIn(dado, str(resposta))
+            self.classificador.assert_not_called()
+
+            json_invalido = f'{{"pergunta": "{dado}"'.encode("utf-8")
+            status, corpo = self.requisitar("POST", "/api/orientacao", json_invalido)
+            self.assertEqual(status, 400)
+            self.assertNotIn(dado, corpo)
+            self.classificador.assert_not_called()
+
+            entrada = {"origem": "texto", "pergunta": f"Meu endereço residencial é {dado}. {pergunta}"}
+            for falha, status in ((ClassificadorIndisponivel(dado), 200), (RuntimeError(dado), 500)):
+                with self.subTest(status=status):
+                    self.classificador.reset_mock()
+                    self.classificador.side_effect = falha
+                    resposta = self.consultar(entrada, status)
+                    self.assertEqual(resposta["estado"], "indisponivel")
+                    self.assertEqual(resposta["citacoes"], [])
+                    self.assertNotIn(dado, str(resposta))
+                    self.classificador.assert_called_once()
+                    self.assertEqual(self.classificador.call_args.args[1], f"{MARCADOR}. {pergunta}")
+        self.assertEqual(saida.getvalue(), "")
+        self.assertEqual(erros.getvalue(), "")

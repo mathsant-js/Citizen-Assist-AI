@@ -12,7 +12,7 @@
 
 O resultado do juiz caiu 3,85 pontos percentuais. As 26 respostas permaneceram iguais entre as rodadas. No caso 10, a conferência adicional considerou correta a afirmação de que a emissão e a transferência do título são gratuitas. O juiz exigiu a palavra “Não” na segunda rodada e a reprovação foi mantida na contagem bruta. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação](../avaliacao/reavaliacao.ipynb) · [Análise do caso](etapa_4.md)
 
-A melhoria da etapa 4 foi verificada com perguntas complementares. A triagem passou a bloquear, antes do grafo, quatro formatos testados de data de nascimento informada em contexto pessoal. A pergunta genérica sobre o requisito continuou funcionando. Datas sem rótulo reconhecível ou escritas por extenso ainda podem passar. [Correção e limites](etapa_4.md#falha-e-correção)
+A melhoria da etapa 4 foi verificada com perguntas complementares. Naquela rodada, a triagem bloqueou antes do grafo quatro formatos de data de nascimento informada em contexto pessoal. A pergunta genérica sobre o requisito continuou funcionando. A auditoria posterior ampliou a cobertura para declarações de nome, endereço e data de nascimento por extenso. [Cobertura e limites atuais](etapa_4.md#cobertura-após-a-auditoria-de-privacidade)
 
 ## Simulação do teste com participantes
 
@@ -49,6 +49,20 @@ O percentual de acertos usa todas as tentativas como denominador. A mediana incl
 | Q4 · Localizar ficha e data | 4,0 | 5 |
 | Q5 · Completar as tarefas sem ajuda | 4,0 | 5 |
 | Geral | 4,2 | 25 |
+
+## Execução automatizada das três tarefas em 07/11/2026
+
+Uma execução no Microsoft Edge percorreu as três tarefas do [roteiro](teste_usuarios.md), com a página recarregada antes de cada tarefa, navegação por teclado e janela de 375 pixels de largura. A primeira consulta usou o menu. As outras duas usaram perguntas fictícias enviadas ao classificador do Ollama Cloud. A conferência comparou os resultados exibidos com a chave do roteiro.
+
+| Tarefa | O que foi encontrado | Resultado | Tempo da automação |
+| --- | --- | --- | ---: |
+| T1 · Documentos da segunda via do RG | Certidão original ou autenticada, comprovante de residência dos últimos 90 dias, boletim em caso de roubo ou furto e declaração no balcão em caso de perda. FC-01 · 01/10/2026. | Acerto | 72 ms |
+| T2 · Certidão de nascimento pelo portal | R$ 49,00 e 3 dias úteis pelo portal. A resposta também mostrou os valores do balcão, com os canais identificados. FC-05 · 01/10/2026. | Acerto | 899 ms |
+| T3 · Intérprete de Libras | Agendamento com 48 horas de antecedência. FC-07 · 01/10/2026. | Acerto | 868 ms |
+
+Nas três tarefas, o foco foi para o título da orientação, o aviso permaneceu visível e a página coube na largura da janela. Na T1, a seção de documentos apareceu depois de quem pode pedir, custo, prazo e agendamento. Na T2, o valor do balcão apareceu antes do valor do portal solicitado.
+
+Os tempos vão da primeira ação automatizada após carregar a página até a orientação ficar visível. A execução teve 3 acertos em 3 tarefas. Os indicadores de tempo de leitura e facilidade de uso exigem observações e notas de participantes.
 
 ## Verificação técnica de 07/11/2026
 

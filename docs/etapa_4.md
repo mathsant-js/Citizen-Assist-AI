@@ -14,7 +14,22 @@ A triagem passou a reconhecer datas numéricas nesses contextos, incluindo rótu
 | Data de terceiro anunciada com “nascido em”, com pontos | Prosseguia com a data | Pediu reformulação antes do grafo |
 | Pergunta sobre a exigência da data, sem informar um valor | Prosseguia | Prosseguiu e retornou orientação |
 
-A comparação complementar foi feita localmente, com a triagem da versão registrada na linha de base e a versão corrigida. Os testes confirmam que o grafo e o classificador ficam sem chamadas nos quatro casos bloqueados e que a pergunta genérica recebe orientação com o classificador simulado. A detecção depende de rótulos e padrões numéricos. Datas sem contexto reconhecível ou escritas por extenso podem passar. [Testes do agente](../tests/test_agente.py)
+A comparação complementar foi feita localmente, com a triagem da versão registrada na linha de base e a versão corrigida naquela rodada. As quatro datas rotuladas foram bloqueadas e a pergunta genérica recebeu orientação com o classificador simulado. A cobertura da triagem atual está descrita a seguir.
+
+### Cobertura após a auditoria de privacidade
+
+A triagem local substitui a declaração por `[dado omitido]` quando reconhece o formato e uma separação clara da pergunta de serviço. A pergunta é preservada. Se o dado estiver misturado à pergunta, tiver um formato incerto ou for todo o conteúdo útil da entrada, a triagem pede reformulação antes de criar o estado do grafo. [Implementação](../citizen_assist/privacidade.py)
+
+| Formato | Exemplos de cobertura |
+| --- | --- |
+| Nome declarado | “Eu sou Pessoa Exemplo”, “Me chamo Pessoa Exemplo”, “Meu nome é Pessoa Exemplo” e “Nome: Pessoa Exemplo”. Com “Eu sou”, a regra usa uma inicial maiúscula como indício de nome. |
+| Endereço declarado | Rótulos como “Meu endereço residencial é” e “Endereço:”, com logradouros escritos por extenso, como rua, avenida ou praça. Um número curto após vírgula pode fazer parte do endereço mascarado. |
+| Nascimento | Rótulos como “data de nascimento”, “nasci em” e “nascido em”. A regra aceita datas numéricas separadas por barra, hífen ou ponto, e a forma “dia de mês de ano”, com numerais comuns em português e componentes em algarismos ou por extenso. |
+| Pergunta sobre requisito | “Preciso informar a data de nascimento para solicitar uma certidão?” segue para o classificador com o texto original e sem alerta. |
+
+O mascaramento de declarações usa a pontuação e o início reconhecível da pergunta para separar os trechos. Abreviações com ponto, dados intercalados na pergunta e outras fronteiras ambíguas podem exigir reformulação. Como a triagem depende de padrões, nomes e endereços sem rótulos reconhecíveis, nomes em minúsculas após “Eu sou”, datas sem contexto de nascimento e grafias fora dos formatos listados podem passar.
+
+Os testes com dados fictícios conferem o texto recebido pelo classificador simulado, o estado inicial do grafo, a limpeza do estado final em falhas tratadas do classificador e a ausência de eco na resposta. A integração HTTP cobre o bloqueio de privacidade, JSON inválido e falhas previstas e inesperadas, com verificação de logs e saídas do servidor. Os casos oficiais 22 e 23 continuam com alerta, orientação e fontes esperadas, usando a classificação local. [Testes do agente](../tests/test_agente.py) · [Testes HTTP](../tests/test_web.py)
 
 ## Rodada oficial
 

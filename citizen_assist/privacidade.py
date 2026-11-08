@@ -21,12 +21,51 @@ DOCUMENTO_ROTULADO = re.compile(
     r"\d[\dXx]*(?:[ ./-][\dXx]+)*\b(?![./-][\w])",
     re.IGNORECASE,
 )
+NOME_DECLARADO = (
+    r"(?:eu sou\s+(?=(?-i:[A-ZÀ-ÖØ-Þ]))|me chamo\s+|"
+    r"(?:meu|seu) nome(?: completo)?\s*(?:[ée]\b|:)\s*|nome(?: completo)?\s*:\s*)"
+)
+ROTULO_ENDERECO = r"endere[cç]o(?:\s+(?:residencial|comercial|completo))?"
+ENDERECO_DECLARADO = (
+    rf"(?:(?:meu|seu) )?{ROTULO_ENDERECO}\s*(?:[:=]|\bé\b(?!\s+"
+    r"(?:necess[aá]rio|obrigat[oó]rio|exigido|solicitado|pedido)\b))\s*"
+)
+ROTULO_NASCIMENTO = r"data de nascimento(?: d[aeo] [^.!?;:=]{1,40}?)?"
+NASCIMENTO_DECLARADO = (
+    rf"(?:(?:(?:a|minha|sua) )?{ROTULO_NASCIMENTO}(?:\s*(?:[:=]|\b[ée]\b)\s*|\s+)"
+    r"|(?:nasci|nascid[oa])(?: em| (?:no )?dia)?\s+)"
+)
+NUMERAL = (
+    r"(?:primeiro|um|dois|tr[eê]s|quatro|cinco|seis|sete|oito|nove|dez|onze|doze|treze|"
+    r"catorze|quatorze|quinze|dezesseis|dezessete|dezoito|dezenove|vinte|trinta|quarenta|"
+    r"cinquenta|sessenta|setenta|oitenta|noventa|cem|cento|trezentos|duzentos|quatrocentos|"
+    r"quinhentos|seiscentos|setecentos|oitocentos|novecentos|mil)"
+)
+DIA_POR_EXTENSO = rf"(?:\d{{1,2}}|{NUMERAL}(?: e {NUMERAL})?)"
+MES = r"(?:janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)"
+DATA_POR_EXTENSO = rf"{DIA_POR_EXTENSO} de {MES} de (?:\d{{4}}|{NUMERAL}(?: (?:e )?{NUMERAL})*)"
+DATA_NUMERICA = r"\d{1,4}[./-]\d{1,2}[./-]\d{1,4}"
+PALAVRA_NOME = r"[^\W\d_]+(?:[-'’][^\W\d_]+)*"
+LOGRADOURO = r"(?:rua|avenida|travessa|alameda|rodovia|pra[cç]a|estrada|largo)"
+# Uma declaração isolada pode ser retirada inteira. Pontuação interna ambígua
+# (por exemplo, abreviações de logradouro) fica para a verificação de indícios.
+DADO_DELIMITADO = re.compile(
+    rf"(?:^|(?<=[.!?;] ))(?:{NOME_DECLARADO}{PALAVRA_NOME}(?: {PALAVRA_NOME})*"
+    rf"|{ENDERECO_DECLARADO}{LOGRADOURO} [^.!?;@]+?"
+    rf"|{NASCIMENTO_DECLARADO}(?:{DATA_NUMERICA}|{DATA_POR_EXTENSO}))"
+    r"(?=[.!?;] (?:como|quanto|qual|quais|onde|quando|posso|preciso|o que|é preciso)\b[^.!?;]*\?"
+    r"|[.!]?$)",
+    re.IGNORECASE,
+)
 DADO_INCERTO = re.compile(
-    r"\b(?:me chamo|(?:meu|seu) nome (?:completo )?(?:é|e|:)|nome completo\s*:|"
+    rf"\b(?:{NOME_DECLARADO}|{ENDERECO_DECLARADO}(?!\s*\[dado omitido\])|"
     r"(?:nome(?: completo)? (?:da|do) [^:!?]{1,40}|nome)\s*:|"
-    r"(?:moro|resido|nasci) (?:em|no|na)|(?:data de nascimento|nascid[oa])\s*[:=]|"
-    r"(?:data de nascimento(?: d[aeo] [^.!?;]{1,40}?)?|nascid[oa](?: em)?)\s+"
-    r"(?:(?:é|e)\s+)?\d{1,4}[./-]\d{1,2}[./-]\d{1,4}\b|"
+    rf"(?:meu|seu) {ROTULO_ENDERECO} (?:fica (?:em|na|no)\b|(?:e )?{LOGRADOURO}\b)|"
+    r"(?:moro|resido|nasci|nascid[oa]) (?:em|no|na)\b|nascid[oa]\s*[:=]|"
+    rf"{ROTULO_NASCIMENTO}\s*[:=]|"
+    rf"(?:minha|sua) {ROTULO_NASCIMENTO} [ée]\s+(?!"
+    r"(?:necess[aá]ria|obrigat[oó]ria|exigida|solicitada|pedida)\b)|"
+    rf"{NASCIMENTO_DECLARADO}(?:{DATA_NUMERICA}\b|{DIA_POR_EXTENSO} de\b)|"
     r"(?:rua|avenida|travessa|alameda|rodovia|r\.|av\.)\s+[^?!;]{1,70}\d|"
     r"(?:cep|senha|endere[cç]o|telefone|celular|e-?mail|número (?:do|de) documento)"
     r"\s*(?:[:=]|\bé\b)(?!\s*\[dado omitido\])\s*\S|"
@@ -58,9 +97,10 @@ def triar_pergunta(pergunta: str) -> tuple[str, bool, str | None]:
     texto = " ".join("".join(c for c in texto if unicodedata.category(c) != "Cf").split())
     if len(texto) > LIMITE_PERGUNTA:
         return "", False, "limite"
+    texto, declaracoes = DADO_DELIMITADO.subn(MARCADOR, texto)
     texto, documentos = DOCUMENTO_ROTULADO.subn(r"\1 " + MARCADOR, texto)
     texto, identificadores = IDENTIFICADORES.subn(MARCADOR, texto)
-    alerta = bool(documentos or identificadores or OFERTA_DE_DADOS.search(texto))
+    alerta = bool(declaracoes or documentos or identificadores or OFERTA_DE_DADOS.search(texto))
     if DADO_INCERTO.search(texto) or "@" in texto:
         return "", True, "privacidade"
 

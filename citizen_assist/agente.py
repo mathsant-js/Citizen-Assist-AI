@@ -19,7 +19,8 @@ AVISO = (
 MENSAGENS = {
     "limite": "A pergunta pode ter até 500 caracteres. Envie uma versão mais curta.",
     "ininteligivel": "Não entendi a pergunta. Reformule ou escolha um assunto no menu.",
-    "privacidade": "Reformule a pergunta sem nomes, contatos ou números de documentos.",
+    "privacidade": "Reformule a pergunta sem dados pessoais, como nomes, endereços, "
+    "datas de nascimento, contatos ou números de documentos.",
     "pedir_esclarecimento": "Qual documento, serviço ou canal de atendimento você quer consultar? Você também pode usar o menu.",
     "fora_do_escopo": "Esse serviço não consta nas fichas. Consulte o site do órgão competente.",
     "sem_evidencia": SEM_EVIDENCIA,

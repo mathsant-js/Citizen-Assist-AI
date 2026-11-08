@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from citizen_assist.agente import AVISO, Agente
 from citizen_assist.base import CATEGORIAS, carregar_indice
 from citizen_assist.ollama import ClassificadorIndisponivel
+from citizen_assist.privacidade import MARCADOR
 
 
 def intencao(categoria, assuntos, *condicoes):
@@ -45,7 +46,7 @@ class TestAgente(unittest.TestCase):
         for pergunta in (
             "Meu RG é AB-234-X. Quanto custa a segunda via?",
             "Meu RG é 123-AB456. Quanto custa a segunda via?",
-            "Nome: Maria Exemplo. Como emito CPF?",
+            "Nome: Maria Exemplo e quero emitir CPF, como faço?",
             "Rua do Exemplo, 234. Preciso de RG.",
             "123.456.789-09",
         ):
@@ -61,30 +62,69 @@ class TestAgente(unittest.TestCase):
                 self.assertEqual(self.perguntar(pergunta)["estado"], "entrada_invalida")
         self.classificador.assert_not_called()
 
-    def test_datas_de_nascimento_rotuladas_param_antes_do_grafo(self):
+    def test_declaracoes_delimitadas_chegam_mascaradas_ao_grafo_e_classificador(self):
+        servico = "Como peço uma certidão pelo portal?"
+        self.classificador.return_value = intencao("certidoes", ["documentos"])
         casos = (
-            "Minha data de nascimento é 12/03/1990. Posso pedir certidão pelo portal?",
-            "Data de nascimento 12-03-1990. Como peço uma certidão?",
-            "A data de nascimento da minha filha é 2014-08-17. Como solicito a certidão?",
-            "Meu filho, nascido em 9.6.2014, precisa comparecer para tirar RG?",
+            ("Eu sou", "Pessoa Exemplo"),
+            ("Me chamo", "Pessoa Exemplo"),
+            ("Nome:", "Maria Exemplo"),
+            ("Meu endereço residencial é", "Praça Fictícia"),
+            ("Endereço:", "Rua Imaginária, 45"),
+            ("Minha data de nascimento é", "doze de março de mil novecentos e noventa"),
+            ("Nasci em", "12 de março de 1990"),
+            ("Nasci dia", "primeiro de julho de dois mil e um"),
+            ("Minha data de nascimento é", "12/03/1990"),
+            ("Data de nascimento", "12-03-1990"),
+            ("A data de nascimento da minha filha é", "2014-08-17"),
+        )
+        for rotulo, dado in casos:
+            with self.subTest(rotulo=rotulo, dado=dado):
+                self.classificador.reset_mock()
+                with patch.object(self.agente._fluxo, "invoke", wraps=self.agente._fluxo.invoke) as invocar:
+                    resultado = self.perguntar(f"{rotulo} {dado}. {servico}")
+                pergunta_limpa = f"{MARCADOR}. {servico}"
+                invocar.assert_called_once_with({"pergunta": pergunta_limpa, "alerta": True})
+                self.classificador.assert_called_once()
+                self.assertEqual(self.classificador.call_args.args[1], pergunta_limpa)
+                self.assertEqual(resultado["estado"], "orientacao")
+                self.assertTrue(resultado["alerta_privacidade"])
+                self.assertNotIn(dado, str(resultado))
+
+    def test_declaracoes_incertas_param_antes_do_grafo(self):
+        casos = (
+            ("Eu sou Pessoa Exemplo e queria saber como peço uma certidão?", "Pessoa Exemplo"),
+            ("Meu endereço residencial é Praça Fictícia, posso pedir uma certidão?", "Praça Fictícia"),
+            ("Meu endereço residencial é Av. Inventada. Como peço uma certidão?", "Inventada"),
+            ("Meu endereço residencial fica na Praça Fictícia. Como peço uma certidão?", "Praça Fictícia"),
+            ("Meu filho, nascido em 9.6.2014, precisa comparecer para tirar RG?", "9.6.2014"),
+            ("Meu filho, nascido em nove de junho de 2014, precisa tirar RG?", "nove de junho de 2014"),
+            ("Minha data de nascimento é doze de março. Como peço uma certidão?", "doze de março"),
+            ("Eu sou Pessoa Exemplo.", "Pessoa Exemplo"),
         )
         with patch.object(self.agente._fluxo, "invoke", wraps=self.agente._fluxo.invoke) as invocar:
-            for pergunta in casos:
+            for pergunta, dado in casos:
                 with self.subTest(pergunta=pergunta):
                     resultado = self.perguntar(pergunta)
                     self.assertEqual(resultado["estado"], "pedir_esclarecimento")
                     self.assertTrue(resultado["alerta_privacidade"])
                     self.assertEqual(resultado["citacoes"], [])
+                    self.assertNotIn(dado, str(resultado))
+                    self.assertIn("Reformule", resultado["mensagem"])
             invocar.assert_not_called()
         self.classificador.assert_not_called()
 
     def test_pergunta_generica_sobre_data_de_nascimento_ainda_pode_ser_classificada(self):
-        pergunta = "A data de nascimento é necessária para pedir a certidão?"
         self.classificador.return_value = intencao("certidoes", ["documentos"])
-        resultado = self.perguntar(pergunta)
-        self.assertEqual(resultado["estado"], "orientacao")
-        self.assertFalse(resultado["alerta_privacidade"])
-        self.assertEqual(self.classificador.call_args.args[1], pergunta)
+        for pergunta in (
+            "A data de nascimento é necessária para pedir a certidão?",
+            "Preciso informar a data de nascimento para solicitar uma certidão?",
+        ):
+            with self.subTest(pergunta=pergunta):
+                resultado = self.perguntar(pergunta)
+                self.assertEqual(resultado["estado"], "orientacao")
+                self.assertFalse(resultado["alerta_privacidade"])
+                self.assertEqual(self.classificador.call_args.args[1], pergunta)
 
     def test_agendamento_e_situacao_cadastral_respondem_sem_enviar_dados(self):
         casos = [
@@ -117,6 +157,37 @@ class TestAgente(unittest.TestCase):
         self.classificador.side_effect = ClassificadorIndisponivel()
         self.assertEqual(self.perguntar("Qual é o custo do RG?")["estado"], "indisponivel")
         self.assertEqual(self.agente.responder({"origem": "menu", "categoria": "rg"})["estado"], "orientacao")
+
+    def test_estado_final_e_resposta_quando_o_classificador_falha(self):
+        dado = "Pessoa Exemplo"
+        pergunta = "Quanto custa a segunda via do RG?"
+        pergunta_limpa = f"{MARCADOR}. {pergunta}"
+        invocar = self.agente._fluxo.invoke
+        estados_finais = []
+
+        def capturar_estado(estado):
+            final = invocar(estado)
+            estados_finais.append(final)
+            return final
+
+        for falha in ({"categoria": dado}, ClassificadorIndisponivel(dado)):
+            with self.subTest(falha=falha):
+                self.classificador.reset_mock()
+                if isinstance(falha, Exception):
+                    self.classificador.side_effect = falha
+                else:
+                    self.classificador.return_value = falha
+                with patch.object(self.agente._fluxo, "invoke", side_effect=capturar_estado) as fluxo:
+                    resultado = self.perguntar(f"Eu sou {dado}. {pergunta}")
+                fluxo.assert_called_once_with({"pergunta": pergunta_limpa, "alerta": True})
+                self.classificador.assert_called_once()
+                self.assertEqual(self.classificador.call_args.args[1], pergunta_limpa)
+                self.assertEqual(estados_finais[-1]["pergunta"], "")
+                self.assertNotIn(dado, str(estados_finais[-1]))
+                self.assertNotIn(dado, str(resultado))
+                self.assertEqual(resultado["estado"], "indisponivel")
+                self.assertTrue(resultado["alerta_privacidade"])
+                self.assertEqual(resultado["citacoes"], [])
 
     def test_faltam_evidencias_em_casos_de_fronteira(self):
         casos = [
