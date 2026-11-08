@@ -48,6 +48,7 @@ Os arquivos, resultados de verificação e o convite para participantes estão n
 As instruções para executar o protótipo e verificar o primeiro fluxo estão no [registro da etapa 2](etapa_2.md).
 A linha de base, o notebook e as instruções de reprodução estão no [registro da etapa 3](etapa_3.md).
 A correção de privacidade e a comparação com a linha de base estão no [registro da etapa 4](etapa_4.md).
+O relatório de fechamento e a situação dos indicadores estão no [registro da etapa 5](etapa_5.md). As instruções para aplicar as sessões estão no [roteiro do teste com participantes](teste_usuarios.md).
 
 | Etapa | Janela sugerida | Trabalho e dependências | Critério de aceite |
 | --- | --- | --- | --- |
@@ -99,11 +100,11 @@ Para que todos possam avaliar os dois caminhos, incluir nas instruções a utili
 
 ## Checklist da entrega acadêmica
 
-- [ ] Nome completo de todos os integrantes no início do trabalho entregue.
-- [ ] Protótipo testável com instruções de instalação e execução, incluindo como configurar o acesso à API no servidor e abrir a interface.
-- [ ] Imagem do grafo ou diagrama da arquitetura incluída na entrega do protótipo em script.
-- [ ] Explicação de como as fichas foram carregadas, organizadas, recuperadas e citadas.
-- [ ] Pipeline do LLM as a Judge e notebook executado com as 26 linhas das duas rodadas, régua, conferência manual e comparação.
-- [ ] Relatório do teste com usuários com acerto, tempo e facilidade de uso.
-- [ ] Justificativa das escolhas de framework, agente único e modelos, com a divisão entre IA e lógica de programação.
-- [ ] Registro da falha analisada, da melhoria implementada e das limitações observadas.
+- [x] Nome completo de todos os integrantes no início do trabalho entregue. [Guia](../README.md)
+- [x] Protótipo testável com instruções de instalação e execução, incluindo como configurar o acesso à API no servidor e abrir a interface. [Guia](../README.md#instalação-e-execução-no-windows)
+- [x] Imagem do grafo ou diagrama da arquitetura incluída na entrega do protótipo em script. [Arquitetura](../README.md#como-funciona)
+- [x] Explicação de como as fichas foram carregadas, organizadas, recuperadas e citadas. [Arquitetura](../README.md#como-funciona)
+- [x] Pipeline do LLM as a Judge e notebook executado com as 26 linhas das duas rodadas, régua, conferência manual e comparação. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação](../avaliacao/reavaliacao.ipynb)
+- [ ] Relatório do teste com usuários com acerto, tempo e facilidade de uso. Os indicadores simulados estão no [relatório da etapa 5](etapa_5.md#simulação-do-teste-com-participantes). A coleta com participantes externos está pendente.
+- [x] Justificativa das escolhas de framework, agente único e modelos, com a divisão entre IA e lógica de programação. [Arquitetura](../README.md#como-funciona)
+- [x] Registro da falha analisada, da melhoria implementada e das limitações observadas. [Etapa 4](etapa_4.md)
