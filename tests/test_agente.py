@@ -30,6 +30,41 @@ class TestAgente(unittest.TestCase):
                 self.assertEqual(resultado["aviso"], AVISO)
         self.classificador.assert_not_called()
 
+    def test_procedimento_de_inscricao_no_cpf_por_canal(self):
+        casos = (
+            (
+                "Como faço inscrição do CPF no balcão?",
+                ("balcao",),
+                ("balcão de atendimento", "R$ 7,00", "só detalha as etapas pelo portal", "órgão competente"),
+                ("Passo a passo pelo portal", "Preencha o formulário", "gratuitas"),
+            ),
+            (
+                "Como faço inscrição do CPF pelo portal?",
+                ("portal",),
+                ("Passo a passo pelo portal", "Preencha o formulário", "2 dias úteis", "gratuitas", "Não é necessário"),
+                ("R$ 7,00", "só detalha as etapas pelo portal"),
+            ),
+            (
+                "Como faço inscrição do CPF pelo portal e no balcão?",
+                ("portal", "balcao"),
+                ("Passo a passo pelo portal", "gratuitas", "R$ 7,00", "só detalha as etapas pelo portal"),
+                (),
+            ),
+        )
+        for pergunta, canais, esperados, ausentes in casos:
+            with self.subTest(canais=canais):
+                self.classificador.reset_mock()
+                self.classificador.return_value = intencao("cpf", ["procedimento"], *canais)
+                resultado = self.perguntar(pergunta)
+                self.classificador.assert_called_once()
+                self.assertEqual(self.classificador.call_args.args[1], pergunta)
+                self.assertEqual(resultado["estado"], "orientacao")
+                self.assertEqual(resultado["citacoes"], [{"codigo": "FC-02", "data_verificacao": "2026-10-01"}])
+                for trecho in esperados:
+                    self.assertIn(trecho, resultado["mensagem"])
+                for trecho in ausentes:
+                    self.assertNotIn(trecho, resultado["mensagem"])
+
     def test_identificadores_sao_removidos_antes_do_grafo(self):
         for dado in ("123.456.789-09", "12345678909", "(11) 99999-9999", "exemplo@example.org"):
             with self.subTest(dado=dado):

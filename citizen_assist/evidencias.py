@@ -122,8 +122,12 @@ def recuperar(
     mensagem = []
     fontes = {}
     secoes = {}
+    procedimento_no_balcao = categoria == "cpf" and "procedimento" in assuntos and "balcao" in condicoes
     for assunto in assuntos:
-        for secao in ASSUNTOS[categoria][assunto]:
+        secoes_assunto = ASSUNTOS[categoria][assunto]
+        if assunto == "procedimento" and procedimento_no_balcao and "portal" not in condicoes:
+            secoes_assunto = ("onde", "custo")
+        for secao in secoes_assunto:
             secoes[(categoria, secao)] = None
         complemento = COMPLEMENTOS.get((categoria, assunto))
         if complemento:
@@ -153,6 +157,11 @@ def recuperar(
             "codigo": fonte.codigo,
             "data_verificacao": fonte.data_verificacao.isoformat(),
         }
+    if procedimento_no_balcao:
+        mensagem.append(
+            "A FC-02 só detalha as etapas pelo portal. "
+            "Consulte o site do órgão competente para confirmar as etapas do atendimento no balcão."
+        )
     return {"mensagem": "\n\n".join(mensagem), "citacoes": list(fontes.values())}
 
 
@@ -165,7 +174,7 @@ def _focar_trecho(
             return primeira.rstrip(".") + "."
         if "segunda_via" in condicoes and "primeira_via" not in condicoes:
             return segunda or trecho
-    if categoria == "cpf" and secao == "custo" and "procedimento" not in assuntos:
+    if categoria == "cpf" and secao == "custo":
         portal, _, balcao = trecho.partition(". ")
         if "portal" in condicoes and "balcao" not in condicoes:
             return portal.rstrip(".") + "."

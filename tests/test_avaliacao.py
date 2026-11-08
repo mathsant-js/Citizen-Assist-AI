@@ -17,6 +17,17 @@ class TestAvaliacao(unittest.TestCase):
             "justificativa": "A orientação atende aos critérios.",
         }
 
+    def test_caso_7_mantem_orientacao_de_inscricao_pelo_portal(self):
+        caso = next(caso for caso in self.casos if caso["id"] == 7)
+        classificador = Mock(return_value={"categoria": "cpf", "assuntos": ["procedimento"], "condicoes": []})
+        agente = Agente(classificador)
+        resultado = agente.responder({"origem": "texto", "pergunta": caso["mensagem"]})
+        classificador.assert_called_once()
+        self.assertEqual(resultado["estado"], "orientacao")
+        self.assertEqual([fonte["codigo"] for fonte in resultado["citacoes"]], caso["fontes_esperadas"])
+        for trecho in ("Acesse o portal", "formulário e anexe", "2 dias úteis", "gratuitas", "Não é necessário"):
+            self.assertIn(trecho, resultado["mensagem"])
+
     def test_caso_22_entra_original_e_chega_mascarado_ao_juiz(self):
         caso = self.casos[21]
         classificador = Mock()
