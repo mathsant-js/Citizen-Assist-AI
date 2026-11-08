@@ -13,6 +13,8 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
+Se o comando `py` estiver indisponível, use o executável do Python 3.12 instalado para rodar `-m venv .venv` e siga com o mesmo comando de instalação.
+
 Para habilitar perguntas livres, copie `.env.example` para `.env` na raiz e preencha `OLLAMA_API_KEY` com a sua chave do Ollama Cloud. Se o servidor já tiver a variável de ambiente `OLLAMA_API_KEY` configurada, ele a usará. Guarde a chave no servidor. O menu funciona mesmo sem acesso ao Ollama.
 
 ```powershell
@@ -29,17 +31,9 @@ Para executar os testes automatizados com os modelos simulados:
 
 ## Como funciona
 
-```mermaid
-flowchart LR
-    A["Menu ou pergunta livre"] --> B["Validação e triagem local"]
-    B -->|"Entrada interrompida"| F["Resposta com aviso"]
-    B -->|"Entrada validada"| C["LangGraph: identificar intenção"]
-    C <-->|"Classifica pergunta sanitizada"| O["Ollama Cloud"]
-    C --> D["Recuperar trechos"]
-    R["Índice FC-01 a FC-07"] --> D
-    D --> E["Montar orientação, fontes e datas"]
-    E --> F
-```
+![Fluxo do Citizen Assist AI, da triagem local à resposta com fontes, datas e aviso. O LangGraph identifica a intenção, consulta o Ollama Cloud quando necessário e recupera trechos das fichas.](docs/arquitetura.svg)
+
+[Código-fonte Mermaid do diagrama](docs/arquitetura.mmd)
 
 O agente carrega as sete fichas Markdown em memória. O índice preserva o código, a data, a categoria e os trechos de cada ficha, incluindo condições como canal e motivo do pedido. O menu fornece a categoria diretamente. Para texto livre, o servidor envia a pergunta sanitizada ao `gemma4:31b`, valida a intenção retornada e seleciona os trechos pertinentes. A FC-07 entra quando há uma regra geral aplicável. O código compõe a resposta e inclui as citações com as datas.
 

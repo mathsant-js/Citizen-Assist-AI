@@ -1,0 +1,47 @@
+---
+config:
+  theme: base
+  fontFamily: Arial, sans-serif
+  htmlLabels: false
+  themeVariables:
+    fontSize: "18px"
+    background: "#ffffff"
+    primaryColor: "#edf4ff"
+    primaryTextColor: "#172b4d"
+    primaryBorderColor: "#5276a7"
+    lineColor: "#475569"
+    clusterBkg: "#f5f8fc"
+    clusterBorder: "#8398b4"
+    edgeLabelBackground: "#ffffff"
+  flowchart:
+    htmlLabels: false
+    diagramPadding: 12
+    nodeSpacing: 20
+    rankSpacing: 32
+    subGraphTitleMargin:
+      top: 6
+      bottom: 18
+---
+flowchart TD
+    accTitle: Fluxo de atendimento do Citizen Assist AI
+    accDescr: A triagem local pode interromper a entrada. No LangGraph, o menu já fornece a categoria. Perguntas sanitizadas que exigem classificação vão ao Ollama Cloud. O grafo recupera trechos das fichas e monta a resposta com as fontes, as datas e o aviso.
+
+    A["Menu ou pergunta livre"] --> B["Validação e triagem local"]
+    B --> G
+    B -->|"Entrada<br/>interrompida"| F["Resposta com aviso"]
+
+    subgraph G["LangGraph"]
+        C["Identificar intenção<br/>Menu fornece a categoria"]
+        D["Recuperar trechos aplicáveis"]
+        E["Montar orientação<br/>com fontes e datas"]
+        C --> D --> E
+    end
+
+    C <--> O["Ollama Cloud · gemma4:31b<br/>Classifica texto sanitizado"]
+    R["Índice em memória<br/>FC-01 a FC-07"] --> D
+    E --> F
+
+    classDef externo fill:#fff4de,stroke:#906420,color:#432d0b
+    classDef fichas fill:#e6f5ed,stroke:#3b7a60,color:#193d30
+    class O externo
+    class R fichas

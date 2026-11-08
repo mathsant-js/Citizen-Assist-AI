@@ -101,8 +101,8 @@ Para que todos possam avaliar os dois caminhos, incluir nas instruções a utili
 ## Checklist da entrega acadêmica
 
 - [x] Nome completo de todos os integrantes no início do trabalho entregue. [Guia](../README.md)
-- [x] Protótipo testável com instruções de instalação e execução, incluindo como configurar o acesso à API no servidor e abrir a interface. [Guia](../README.md#instalação-e-execução-no-windows)
-- [x] Imagem do grafo ou diagrama da arquitetura incluída na entrega do protótipo em script. [Arquitetura](../README.md#como-funciona)
+- [x] Protótipo testável com instruções de instalação e execução, incluindo como configurar o acesso à API no servidor e abrir a interface. Menu e pergunta livre verificados em ambiente limpo. [Guia](../README.md#instalação-e-execução-no-windows) · [Verificação técnica](etapa_5.md#nova-verificação-técnica-em-ambiente-limpo)
+- [x] Diagrama Mermaid exportado como SVG e exibido no README. [Arquitetura](../README.md#como-funciona) · [SVG](arquitetura.svg)
 - [x] Explicação de como as fichas foram carregadas, organizadas, recuperadas e citadas. [Arquitetura](../README.md#como-funciona)
 - [x] Pipeline do LLM as a Judge e notebook executado com as 26 linhas das duas rodadas, régua, conferência manual e comparação. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação](../avaliacao/reavaliacao.ipynb)
 - [ ] Relatório do teste com usuários com acerto, tempo e facilidade de uso. Os indicadores simulados estão no [relatório da etapa 5](etapa_5.md#simulação-do-teste-com-participantes). A coleta com participantes externos está pendente.
