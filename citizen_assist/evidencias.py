@@ -1,5 +1,7 @@
 """Assuntos selecionáveis e vínculos revisados com as seções das fichas."""
 
+import re
+
 from .base import Indice
 
 GERAL = "atendimento_geral"
@@ -106,6 +108,70 @@ SEM_EVIDENCIA = (
     "As fichas não trazem esse detalhe. Consulte o site do órgão competente para confirmar."
 )
 
+# Cada conclusão exige a pergunta correspondente e a regra explícita na seção recuperada.
+CONCLUSOES = {
+    ("rg", "agendamento"): (
+        (r"(?:preciso (?:agendar|marcar horário)|é preciso agendar) (?:para (?:fazer|tirar) )?"
+         r"(?:o rg|a segunda via do rg)", "obrigatório, feito pelo portal",
+         "Sim. O agendamento é obrigatório e deve ser feito pelo portal."),
+    ),
+    ("rg", "perda_roubo_furto"): (
+        (r"perdi (?:meu|o) rg[.,] (?:eu )?preciso (?:levar|apresentar) (?:o )?boletim de ocorrência",
+         "**perda**: declaração de extravio, assinada no próprio balcão (o boletim de ocorrência não é exigido)",
+         "Não. Em caso de perda do RG, assine a declaração de extravio no balcão."),
+    ),
+    ("rg", "responsavel"): (
+        (r"meu filho tem (?:[1-9]|1[01]) anos[.,] (?:ele )?pode tirar (?:o )?rg sozinho",
+         "menores de 12 anos devem ir acompanhados de um responsável legal",
+         "Não. Menores de 12 anos precisam ir com um responsável legal."),
+    ),
+    ("titulo_eleitor", "custo"): (
+        (r"(?:(?:o )?título de eleitor é pago|(?:é preciso|preciso) pagar (?:para tirar|pelo) (?:o )?título de eleitor)",
+         "gratuito (primeira via, segunda via e transferência)",
+         "Não. A primeira via, a segunda via e a transferência são gratuitas."),
+        (r"(?:o )?título de eleitor é gratuito",
+         "gratuito (primeira via, segunda via e transferência)",
+         "Sim. A primeira via, a segunda via e a transferência são gratuitas."),
+    ),
+    ("titulo_eleitor", "idade_voto"): (
+        (r"(?:o voto|votar) é obrigatório para quem tem (?:16|17) anos",
+         "é facultativo para quem tem 16 ou 17 anos", "Não. Aos 16 e 17 anos, o voto é facultativo."),
+        (r"(?:o voto|votar) é obrigatório para quem tem (?:18|19|[2-6][0-9]) anos",
+         "o voto é obrigatório de 18 a 69 anos", "Sim. Dos 18 aos 69 anos, o voto é obrigatório."),
+    ),
+    ("certidoes", "terceiros"): (
+        (r"(?:eu )?posso (?:pedir|solicitar) (?:a|uma) certidão de outra pessoa",
+         "terceiros com procuração simples", "Sim, com procuração simples."),
+    ),
+    ("certidoes", "agendamento"): (
+        (r"preciso (?:agendar|marcar horário) (?:para (?:tirar|pedir|solicitar) )?(?:uma|a) certidão",
+         "não é necessário", "Não. O pedido de certidão dispensa agendamento."),
+    ),
+    ("cnh", "dirigir_vencida"): (
+        (r"(?:minha|a) cnh (?:venceu|está vencida) há (?:3[1-9]|[4-9][0-9]|[1-9][0-9]{2,3}) dias?[.,] "
+         r"(?:ainda )?posso dirigir",
+         "cnh vencida há mais de 30 dias não pode dirigir até concluir a renovação",
+         "Não. Com a CNH vencida há mais de 30 dias, só é possível voltar a dirigir após concluir a renovação."),
+    ),
+    (GERAL, "horario"): (
+        (r"(?:(?:vocês )?atendem|a central atende|há atendimento|(?:a central |o balcão )?abre) "
+         r"(?:aos? |nos? )?sábados?", "segunda a sexta, das 8h às 17h. não há atendimento aos sábados",
+         "Não. O atendimento presencial funciona de segunda a sexta, das 8h às 17h."),
+    ),
+}
+
+
+def conclusao_direta(indice: Indice, categoria: str, assuntos: list[str], pergunta: str) -> str:
+    texto = pergunta.casefold().removesuffix("?").rstrip()
+    ficha = indice.por_categoria[categoria]
+    for assunto in assuntos:
+        for padrao, regra, conclusao in CONCLUSOES.get((categoria, assunto), ()):
+            if re.fullmatch(padrao, texto) and any(
+                regra in ficha.trechos.get(secao, "").casefold() for secao in ASSUNTOS[categoria][assunto]
+            ):
+                return conclusao
+    return ""
+
 
 def recuperar(
     indice: Indice, categoria: str, assuntos: list[str], condicoes: list[str]
@@ -139,7 +205,9 @@ def recuperar(
         mensagem.append("O assistente não consulta situação cadastral. Consulte o portal da Central do Cidadão.")
     if not assuntos:
         mensagem.append(ficha.titulo)
-        secoes = dict.fromkeys((categoria, secao) for secao in ficha.trechos)
+        if categoria == "rg":
+            secoes[(categoria, "documentos_necessarios_para_a_segunda_via")] = None
+        secoes.update(dict.fromkeys((categoria, secao) for secao in ficha.trechos))
         if categoria == "certidoes":
             secoes[(GERAL, "atendimento_por_terceiros")] = None
 
@@ -180,6 +248,13 @@ def _focar_trecho(
             return portal.rstrip(".") + "."
         if "balcao" in condicoes and "portal" not in condicoes:
             return balcao or trecho
+    if secao == "custo_e_prazo_cada_certidao":
+        canais = {"portal", "balcao"}.intersection(condicoes)
+        if len(canais) == 1:
+            prefixo = "- Pelo portal," if "portal" in canais else "- No balcão "
+            for linha in trecho.splitlines():
+                if linha.startswith(prefixo):
+                    return linha.removeprefix("- ")
     if secao == "validade_da_cnh_renovada":
         prefixos = {"ate_49": "- até", "de_50_a_69": "- de 50", "a_partir_de_70": "- 70"}
         faixas = [prefixos[faixa] for faixa in condicoes if faixa in prefixos]

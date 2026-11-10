@@ -8,7 +8,7 @@ from langgraph.graph import END, START, StateGraph
 from langsmith import tracing_context
 
 from .base import CATEGORIAS, carregar_indice
-from .evidencias import ASSUNTOS, CONDICOES, SEM_EVIDENCIA, recuperar
+from .evidencias import ASSUNTOS, CONDICOES, SEM_EVIDENCIA, conclusao_direta, recuperar
 from .ollama import ClassificadorIndisponivel, classificar_ollama
 from .privacidade import contem_identificador, pergunta_para_classificador, triar_pergunta
 
@@ -99,6 +99,7 @@ class Estado(TypedDict, total=False):
     condicoes: list[str]
     motivo: str
     evidencias: dict | None
+    conclusao: str
     resultado: dict
 
 
@@ -203,6 +204,10 @@ class Agente:
         selecao = _validar_intencao(intencao)
         if selecao.get("categoria") in ("cnh", "titulo_eleitor"):
             self._aplicar_limites(pergunta, selecao)
+        if not selecao.get("motivo"):
+            selecao["conclusao"] = conclusao_direta(
+                self._indice, selecao["categoria"], selecao["assuntos"], pergunta,
+            )
         return {"pergunta": "", **selecao}
 
     @staticmethod
@@ -228,6 +233,8 @@ class Agente:
         if estado.get("motivo"):
             return {}
         evidencias = recuperar(self._indice, estado["categoria"], estado["assuntos"], estado["condicoes"])
+        if evidencias and (conclusao := estado.get("conclusao")):
+            evidencias["mensagem"] = f"**{conclusao}**\n\n{evidencias['mensagem']}"
         return {"evidencias": evidencias}
 
     @staticmethod

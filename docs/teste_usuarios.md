@@ -2,6 +2,8 @@
 
 **Coleta externa pendente.** Convide pelo menos cinco pessoas de fora do grupo. Reserve cerca de 15 minutos por sessão. Antes das sessões, configure a chave do Ollama Cloud e confirme que o menu e a pergunta livre funcionam. Use a mesma versão do protótipo em todas as sessões e separe as instruções das tarefas da chave de correção. [Convite para enviar](#convite-para-enviar) · [Instalação](../README.md#instalação-e-execução-no-windows)
 
+Registre o hash completo do commit da rodada junto à ficha anônima. Use esse mesmo commit para iniciar a interface e executar uma cópia do notebook de reavaliação. Na raiz do projeto, `git rev-parse HEAD` identifica a versão em uso e `git status --short` permite confirmar que a cópia está limpa antes de iniciar a rodada. [Reproduzir a reavaliação](etapa_4.md#reproduzir)
+
 ## Instruções para ler em cada sessão
 
 > Você vai testar um guia de documentos de uma central fictícia. Leia uma tarefa por vez e diga qual resposta encontrou. Você terá até três minutos por tarefa e pode parar a qualquer momento. Siga o caminho indicado quando houver um. Evite digitar nomes, números de documentos, contatos, endereços ou outros dados pessoais. Vamos registrar os tempos, os resultados e as notas de forma anônima. No fim, você vai responder a cinco perguntas sobre a facilidade de uso.

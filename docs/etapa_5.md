@@ -89,3 +89,17 @@ As três tarefas foram repetidas no Microsoft Edge 157.0.4341.42, em modo sem ja
 O tempo novo foi medido no navegador do primeiro `Tab` até a confirmação de um quadro renderizado com o título da orientação visível. Do `Enter` até o mesmo ponto foram 23 ms, 567 ms e 572 ms, respectivamente. `Ctrl+End` trouxe a fonte e a data à área visível nas três tarefas. O aviso permaneceu na página e a largura do conteúdo ficou em 375 pixels, sem rolagem horizontal.
 
 As duas execuções tiveram 3/3 acertos, com as mesmas fichas, datas e destino do foco. A seção de documentos do RG continuou depois de elegibilidade, custo, prazo e agendamento. O balcão continuou antes do portal na resposta da certidão. Os tempos técnicos foram menores nesta execução isolada, que inclui a latência do serviço nas perguntas livres. A medição do roteiro com pessoas começa na leitura da instrução e termina quando a pessoa informa a resposta.
+
+## Verificação da versão preparada para as sessões em 09/11/2026
+
+Os 31 testes automatizados passaram, incluindo as verificações de triagem antes do grafo, remoção de dados antes do classificador, ordenação das orientações e conclusão condicionada à evidência da ficha. No Edge 157.0.4341.42, as três tarefas foram executadas por teclado com a página recarregada antes de cada uma, em 375 × 812 e 320 × 812 pixels. As perguntas livres usaram o classificador do Ollama Cloud.
+
+| Tarefa | Resultado técnico nas duas larguras | Ficha e data |
+| --- | --- | --- |
+| T1 · RG pelo menu | `Tab` e `Enter` no botão **RG · Documentos da segunda via**. A lista completa foi a primeira seção da orientação e cobriu os quatro pontos da chave. | FC-01 · 01/10/2026 |
+| T2 · Certidão pelo portal | Oito `Tab` até **Sua pergunta**, mais um até **Enviar pergunta** e `Enter`. A orientação começou pelo custo de R$ 49,00 e prazo de 3 dias úteis para o PDF pelo portal. | FC-05 · 01/10/2026 |
+| T3 · Intérprete de Libras | O mesmo percurso pelo campo de pergunta levou à orientação de agendar com 48 horas de antecedência. | FC-07 · 01/10/2026 |
+
+Nas seis execuções, o foco chegou ao título **Orientação** com contorno visível. `Ctrl+End` levou à ficha, à data e ao aviso. A página coube nas duas larguras sem rolagem horizontal. Uma consulta adicional a 320 pixels, “O título de eleitor é pago?”, começou com “Não” e indicou a gratuidade com a FC-03.
+
+**Coleta externa pendente.** O acerto sem ajuda, o tempo de execução e as notas de facilidade serão apurados com participantes externos conforme o roteiro. Os resultados anteriores do juiz pertencem à rodada registrada no notebook. A reavaliação desta versão deve usar o mesmo commit das sessões. [Roteiro e registro de versão](teste_usuarios.md)

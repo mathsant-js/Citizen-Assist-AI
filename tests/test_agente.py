@@ -30,6 +30,49 @@ class TestAgente(unittest.TestCase):
                 self.assertEqual(resultado["aviso"], AVISO)
         self.classificador.assert_not_called()
 
+    def test_menu_rg_mostra_documentos_antes_das_demais_secoes(self):
+        resultado = self.agente.responder({"origem": "menu", "categoria": "rg"})
+        _, documentos, *_ = resultado["mensagem"].split("\n\n")
+        self.assertTrue(documentos.startswith("Documentos da segunda via\n"))
+        for trecho in ("cópia autenticada", "últimos 90 dias", "boletim de ocorrência", "declaração de extravio"):
+            self.assertIn(trecho, documentos)
+        self.assertIn("Agendamento", resultado["mensagem"])
+        self.classificador.assert_not_called()
+
+    def test_certidao_mostra_custo_e_prazo_do_canal_pedido(self):
+        portal = "Pelo portal, em PDF: R$ 49,00, pronta em 3 dias úteis."
+        balcao = "No balcão do Cartório Central de Aurora: R$ 55,00, pronta em 5 dias úteis."
+        for canais, linhas in (
+            (("portal",), [portal]), (("balcao",), [balcao]),
+            (("portal", "balcao"), [f"- {balcao}", f"- {portal}"]),
+            ((), [f"- {balcao}", f"- {portal}"]),
+        ):
+            with self.subTest(canais=canais):
+                self.classificador.return_value = intencao("certidoes", ["custo", "prazo"], "nascimento", *canais)
+                resultado = self.perguntar("Qual é o custo e o prazo da segunda via da certidão de nascimento?")
+                self.assertEqual(resultado["mensagem"].splitlines(), ["Custo e prazo", *linhas])
+                self.assertEqual(resultado["citacoes"], [{"codigo": "FC-05", "data_verificacao": "2026-10-01"}])
+
+    def test_conclusao_direta_so_com_pergunta_e_evidencia_correspondentes(self):
+        self.classificador.return_value = intencao("titulo_eleitor", ["custo"])
+        for pergunta, inicio in (
+            ("O título de eleitor é pago?", "**Não. "),
+            ("O título de eleitor é gratuito?", "**Sim. "),
+            ("Quanto custa o título de eleitor?", "Custo\n"),
+            ("O título de eleitor é pago se eu perder o prazo?", "Custo\n"),
+        ):
+            with self.subTest(pergunta=pergunta):
+                resultado = self.perguntar(pergunta)
+                self.assertTrue(resultado["mensagem"].startswith(inicio))
+                self.assertEqual(resultado["citacoes"], [{"codigo": "FC-03", "data_verificacao": "2026-10-01"}])
+
+        indice = carregar_indice()
+        indice.por_categoria["titulo_eleitor"].trechos["custo"] = "Consulte o balcão para saber o valor."
+        with patch("citizen_assist.agente.carregar_indice", return_value=indice):
+            self.agente = Agente(self.classificador)
+        resultado = self.perguntar("O título de eleitor é pago?")
+        self.assertTrue(resultado["mensagem"].startswith("Custo\n"))
+
     def test_procedimento_de_inscricao_no_cpf_por_canal(self):
         casos = (
             (
