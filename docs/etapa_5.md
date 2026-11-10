@@ -4,13 +4,23 @@
 
 ## Acerto das orientações
 
-| Medição | Linha de base | Reavaliação |
-| --- | --- | --- |
-| Acertos pelo juiz | 26/26 (100%) | 25/26 (96,15%) |
-| Conferência manual da mesma amostra | 12/12 | 12/12 |
-| Falhas técnicas pendentes | 0 | 0 |
+| Medição | Linha de base | Reavaliação de 07/11/2026 | Versão final de 09/11/2026 |
+| --- | --- | --- | --- |
+| Calibração do juiz | 9/9 | 9/9 | 9/9 |
+| Acertos pelo veredito bruto do juiz | 26/26 (100%) | 25/26 (96,15%) | 24/26 (92,31%) |
+| Acertos após checagens automáticas | 26/26 (100%) | 25/26 (96,15%) | 24/26 (92,31%) |
+| Falhas técnicas pendentes | 0 | 0 | 0 |
+| Acertos na conferência manual da amostra fixa | 12/12 | 12/12 | 11/12 |
 
-O resultado do juiz caiu 3,85 pontos percentuais. As 26 respostas permaneceram iguais entre as rodadas. No caso 10, a conferência adicional considerou correta a afirmação de que a emissão e a transferência do título são gratuitas. O juiz exigiu a palavra “Não” na segunda rodada e a reprovação foi mantida na contagem bruta. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação](../avaliacao/reavaliacao.ipynb) · [Análise do caso](etapa_4.md)
+A versão final usa o commit `65a699f61483fcbe9515816bd7d52bd20884a0f4`. Os 26 casos foram comparados campo a campo com o enunciado em Word, sem divergências. A execução usou o Ollama Cloud com `gemma4:31b` no classificador e `gpt-oss:20b` no juiz, com os parâmetros registrados na linha de base. A pontuação bruta caiu 7,69 pontos percentuais ante a linha de base. Houve nove mudanças de mensagem em relação às rodadas anteriores. As citações, datas, estados, avisos e alertas permaneceram iguais. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação de 07/11](../avaliacao/reavaliacao.ipynb) · [Notebook final](../avaliacao/reavaliacao_final.ipynb)
+
+- **Caso 1 · Custo do RG.** O juiz reprovou por diferença de redação, embora a resposta fosse igual à das duas rodadas anteriores. A conferência manual aprovou os R$ 38,00 e o pagamento por guia gerada no portal, conforme o esperado e a FC-01.
+- **Caso 13 · Certidão.** O juiz e a conferência manual reprovaram a omissão de R$ 55,00 e 5 dias úteis no balcão, exigidos entre parênteses pelo enunciado. A versão final apresenta apenas o PDF de R$ 49,00 em 3 dias úteis pelo portal. Os dados informados são fiéis à FC-05. Pela régua, a omissão afeta o conteúdo esperado.
+- **Caso 10 · Título de eleitor.** O juiz reprovou a resposta em 07/11 por faltar a palavra “Não”. A conferência daquela rodada aprovou a gratuidade por equivalência de sentido. A resposta final começa com “Não”, mantém a gratuidade da primeira via, da segunda via e da transferência e foi aprovada pelo juiz e pela conferência manual.
+
+Na amostra fixa de 12 IDs, o juiz aprovou 10 respostas e a conferência manual aprovou 11. A concordância foi de 11/12. Os dois casos reprovados pelo juiz continuam na contagem bruta. O notebook inclui a amostra por ID e a revisão de todas as mudanças de mensagem ou de veredito entre as três rodadas. [Conferência manual](../avaliacao/reavaliacao_final.ipynb#Conferência-manual-da-amostra-fixa)
+
+Os 11 testes complementares passaram. Oito verificaram privacidade com o classificador simulado, um verificou a recusa local de manipulação e dois exercitaram o classificador real com tentativas de impor um prefixo ou alterar a taxa do RG. A tabela separada do notebook conserva os resultados e o modo de execução. Os 31 testes automatizados também passaram, incluindo os do servidor. [Testes complementares](../avaliacao/reavaliacao_final.ipynb#Testes-complementares-de-privacidade-e-manipulação)
 
 A melhoria da etapa 4 foi verificada com perguntas complementares. Naquela rodada, a triagem bloqueou antes do grafo quatro formatos de data de nascimento informada em contexto pessoal. A pergunta genérica sobre o requisito continuou funcionando. A auditoria posterior ampliou a cobertura para declarações de nome, endereço e data de nascimento por extenso. [Cobertura e limites atuais](etapa_4.md#cobertura-após-a-auditoria-de-privacidade)
 
@@ -102,4 +112,4 @@ Os 31 testes automatizados passaram, incluindo as verificações de triagem ante
 
 Nas seis execuções, o foco chegou ao título **Orientação** com contorno visível. `Ctrl+End` levou à ficha, à data e ao aviso. A página coube nas duas larguras sem rolagem horizontal. Uma consulta adicional a 320 pixels, “O título de eleitor é pago?”, começou com “Não” e indicou a gratuidade com a FC-03.
 
-**Coleta externa pendente.** O acerto sem ajuda, o tempo de execução e as notas de facilidade serão apurados com participantes externos conforme o roteiro. Os resultados anteriores do juiz pertencem à rodada registrada no notebook. A reavaliação desta versão deve usar o mesmo commit das sessões. [Roteiro e registro de versão](teste_usuarios.md)
+**Coleta externa pendente.** O acerto sem ajuda, o tempo de execução e as notas de facilidade serão apurados com participantes externos conforme o roteiro. O notebook final identifica o commit avaliado para vincular as sessões à mesma versão. [Roteiro e registro de versão](teste_usuarios.md)

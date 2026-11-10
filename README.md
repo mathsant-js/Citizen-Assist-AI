@@ -43,5 +43,6 @@ O LangGraph organiza as etapas de um agente único porque os sete temas comparti
 
 - [Plano de desenvolvimento](docs/plano_desenvolvimento.md)
 - [Linha de base executada](avaliacao/linha_base.ipynb) e [instruções de reprodução](docs/etapa_3.md)
-- [Reavaliação executada](avaliacao/reavaliacao.ipynb) e [registro da correção de privacidade](docs/etapa_4.md)
+- [Avaliação executada na versão final](avaliacao/reavaliacao_final.ipynb) e [comparação com as rodadas anteriores](docs/etapa_5.md#acerto-das-orientações)
+- [Reavaliação de 07/11/2026](avaliacao/reavaliacao.ipynb) e [registro da correção de privacidade](docs/etapa_4.md)
 - [Relatório da etapa 5](docs/etapa_5.md) e [roteiro do teste com participantes](docs/teste_usuarios.md)
