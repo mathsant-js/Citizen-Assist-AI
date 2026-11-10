@@ -10,7 +10,7 @@ from langsmith import tracing_context
 from .base import CATEGORIAS, carregar_indice
 from .evidencias import ASSUNTOS, CONDICOES, SEM_EVIDENCIA, recuperar
 from .ollama import ClassificadorIndisponivel, classificar_ollama
-from .privacidade import contem_identificador, triar_pergunta
+from .privacidade import contem_identificador, pergunta_para_classificador, triar_pergunta
 
 AVISO = (
     "Este é um protótipo educacional com informações fictícias. "
@@ -197,7 +197,7 @@ class Agente:
         intencao = _classificar_localmente(pergunta, estado["alerta"])
         if intencao is None:
             try:
-                intencao = self._classificador(INSTRUCAO, pergunta)
+                intencao = self._classificador(INSTRUCAO, pergunta_para_classificador(pergunta))
             except ClassificadorIndisponivel:
                 return {"pergunta": "", "motivo": "indisponivel"}
         selecao = _validar_intencao(intencao)

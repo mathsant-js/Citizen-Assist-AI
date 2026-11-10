@@ -46,7 +46,19 @@ class TestAvaliacao(unittest.TestCase):
         self.assertNotIn(identificador, json.dumps(dados))
         self.assertNotIn(identificador, json.dumps(registro))
         self.assertTrue(registro["resposta"]["alerta_privacidade"])
+        self.assertEqual(registro["resposta"]["estado"], "orientacao")
+        self.assertEqual([fonte["codigo"] for fonte in registro["resposta"]["citacoes"]], caso["fontes_esperadas"])
         self.assertEqual(registro["resultado_validado"], "correto")
+
+    def test_caso_23_orienta_sem_classificador(self):
+        caso = next(caso for caso in self.casos if caso["id"] == 23)
+        classificador = Mock()
+        resultado = Agente(classificador).responder({"origem": "texto", "pergunta": caso["mensagem"]})
+        classificador.assert_not_called()
+        self.assertTrue(resultado["alerta_privacidade"])
+        self.assertEqual(resultado["estado"], "orientacao")
+        self.assertEqual([fonte["codigo"] for fonte in resultado["citacoes"]], caso["fontes_esperadas"])
+        self.assertIn("não realiza agendamentos", resultado["mensagem"])
 
     def test_vazamento_e_falta_de_aviso_falham_mesmo_com_parecer_positivo(self):
         caso = self.casos[0]

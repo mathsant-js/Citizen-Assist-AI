@@ -4,12 +4,11 @@ from io import StringIO
 import json
 from threading import Thread
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from citizen_assist.agente import AVISO, Agente
 from citizen_assist.base import CATEGORIAS
-from citizen_assist.ollama import ClassificadorIndisponivel
-from citizen_assist.privacidade import MARCADOR
+from citizen_assist.ollama import ClassificadorIndisponivel, classificar_ollama
 from citizen_assist.web import ENDERECO, ServidorLocal
 
 
@@ -51,17 +50,41 @@ class TestWeb(unittest.TestCase):
                 self.assertIn({"codigo": codigo, "data_verificacao": "2026-10-01"}, resposta["citacoes"])
         self.classificador.assert_not_called()
 
-    def test_pergunta_livre_chega_ao_modelo_sem_identificador(self):
-        dado = "exemplo@example.org"
-        resposta = self.consultar({"origem": "texto", "pergunta": f"{dado}. Como agendo Libras?"})
+    def test_pergunta_livre_chega_ao_ollama_sem_o_trecho_mascarado(self):
+        dado = "E-mail: exemplo@example.org"
+        pergunta = "Como agendo Libras?"
+        conexao = Mock()
+        conexao.getresponse.return_value.status = 200
+        conexao.getresponse.return_value.read.return_value = json.dumps({
+            "message": {"content": json.dumps(self.classificador.return_value)},
+        }).encode()
+        self.classificador.side_effect = classificar_ollama
+        with (
+            patch("citizen_assist.ollama._ler_chave", return_value="chave-ficticia"),
+            patch("citizen_assist.ollama.http.client.HTTPSConnection", return_value=conexao),
+        ):
+            resposta = self.consultar({"origem": "texto", "pergunta": f"{dado}. {pergunta}"})
         self.assertEqual(resposta["estado"], "orientacao")
         self.assertTrue(resposta["alerta_privacidade"])
         self.assertEqual(resposta["citacoes"], [{"codigo": "FC-07", "data_verificacao": "2026-10-01"}])
         self.assertIn("48 horas", resposta["mensagem"])
         self.assertNotIn("gestantes", resposta["mensagem"])
-        self.assertNotIn(dado, json.dumps(resposta))
+        self.assertNotIn("exemplo@example.org", json.dumps(resposta))
         self.classificador.assert_called_once()
-        self.assertNotIn(dado, self.classificador.call_args.args[1])
+        self.assertEqual(self.classificador.call_args.args[1], pergunta)
+        conexao.request.assert_called_once()
+        metodo, caminho, corpo, _ = conexao.request.call_args.args
+        self.assertEqual((metodo, caminho), ("POST", "/api/chat"))
+        self.assertEqual(json.loads(corpo)["messages"][1], {"role": "user", "content": pergunta})
+
+    def test_nome_sem_rotulo_misturado_a_pergunta_pede_reformulacao(self):
+        nome = "Marina Ficticia"
+        resposta = self.consultar({"origem": "texto", "pergunta": f"{nome}, como agendo Libras?"})
+        self.assertEqual(resposta["estado"], "pedir_esclarecimento")
+        self.assertTrue(resposta["alerta_privacidade"])
+        self.assertIn("Reformule", resposta["mensagem"])
+        self.assertNotIn(nome, json.dumps(resposta))
+        self.classificador.assert_not_called()
 
     def test_ambiguidade_e_indisponibilidade(self):
         self.classificador.side_effect = ClassificadorIndisponivel()
@@ -112,6 +135,6 @@ class TestWeb(unittest.TestCase):
                     self.assertEqual(resposta["citacoes"], [])
                     self.assertNotIn(dado, str(resposta))
                     self.classificador.assert_called_once()
-                    self.assertEqual(self.classificador.call_args.args[1], f"{MARCADOR}. {pergunta}")
+                    self.assertEqual(self.classificador.call_args.args[1], pergunta)
         self.assertEqual(saida.getvalue(), "")
         self.assertEqual(erros.getvalue(), "")

@@ -66,16 +66,33 @@ class TestAgente(unittest.TestCase):
                     self.assertNotIn(trecho, resultado["mensagem"])
 
     def test_identificadores_sao_removidos_antes_do_grafo(self):
-        for dado in ("123.456.789-09", "12345678909", "(11) 99999-9999", "exemplo@example.org"):
+        servico = "Quanto custa a segunda via do RG?"
+        for dado in (
+            "123.456.789-09", "12345678909", "１２３ ４５６ ７８９ ０９",
+            "12.345.678-X", "12 345 678 x", "1234 5678 9012", "12.345.678/0001-90",
+            "(11) 99999-9999", "+55 (11) 9 9999-9999", "11.99999.9999",
+            "exemplo@example.org", "E-mail: exemplo @ example . org",
+            "Meu WhatsApp: +55 (11) 9 9999-9999", "CEP: 12345-678",
+        ):
             with self.subTest(dado=dado):
-                pergunta = f"{dado}. Quanto custa a segunda via do RG?"
+                self.classificador.reset_mock()
                 with patch.object(self.agente._fluxo, "invoke", wraps=self.agente._fluxo.invoke) as invocar:
-                    resultado = self.perguntar(pergunta)
+                    resultado = self.perguntar(f"{dado}. {servico}")
                 self.assertEqual(resultado["estado"], "orientacao")
                 self.assertTrue(resultado["alerta_privacidade"])
                 self.assertNotIn(dado, str(resultado))
-                self.assertNotIn(dado, invocar.call_args.args[0]["pergunta"])
-                self.assertNotIn(dado, self.classificador.call_args.args[1])
+                pergunta_mascarada = invocar.call_args.args[0]["pergunta"]
+                self.assertIn(MARCADOR, pergunta_mascarada)
+                self.assertNotRegex(pergunta_mascarada, r"\d|@")
+                self.classificador.assert_called_once()
+                self.assertEqual(self.classificador.call_args.args[1], servico)
+
+    def test_tipo_do_documento_permanece_como_contexto_sem_o_numero(self):
+        resultado = self.perguntar("Meu RG nº 12.345.678-X. Quanto custa a segunda via?")
+        self.assertEqual(resultado["estado"], "orientacao")
+        self.assertTrue(resultado["alerta_privacidade"])
+        self.classificador.assert_called_once()
+        self.assertEqual(self.classificador.call_args.args[1], "Meu RG. Quanto custa a segunda via?")
 
     def test_dados_incertos_ou_sem_contexto_param_o_fluxo(self):
         for pergunta in (
@@ -97,7 +114,7 @@ class TestAgente(unittest.TestCase):
                 self.assertEqual(self.perguntar(pergunta)["estado"], "entrada_invalida")
         self.classificador.assert_not_called()
 
-    def test_declaracoes_delimitadas_chegam_mascaradas_ao_grafo_e_classificador(self):
+    def test_declaracoes_delimitadas_chegam_mascaradas_ao_grafo_e_sao_omitidas_do_classificador(self):
         servico = "Como peço uma certidão pelo portal?"
         self.classificador.return_value = intencao("certidoes", ["documentos"])
         casos = (
@@ -106,6 +123,10 @@ class TestAgente(unittest.TestCase):
             ("Nome:", "Maria Exemplo"),
             ("Meu endereço residencial é", "Praça Fictícia"),
             ("Endereço:", "Rua Imaginária, 45"),
+            ("Endereço:", "Av. Inventada, 45"),
+            ("Meu endereço é", "R. Inventada, 45"),
+            ("Endereço:", "Trav. Imaginária, 45"),
+            ("Endereço:", "av imaginária, 45"),
             ("Minha data de nascimento é", "doze de março de mil novecentos e noventa"),
             ("Nasci em", "12 de março de 1990"),
             ("Nasci dia", "primeiro de julho de dois mil e um"),
@@ -121,7 +142,7 @@ class TestAgente(unittest.TestCase):
                 pergunta_limpa = f"{MARCADOR}. {servico}"
                 invocar.assert_called_once_with({"pergunta": pergunta_limpa, "alerta": True})
                 self.classificador.assert_called_once()
-                self.assertEqual(self.classificador.call_args.args[1], pergunta_limpa)
+                self.assertEqual(self.classificador.call_args.args[1], servico)
                 self.assertEqual(resultado["estado"], "orientacao")
                 self.assertTrue(resultado["alerta_privacidade"])
                 self.assertNotIn(dado, str(resultado))
@@ -129,9 +150,18 @@ class TestAgente(unittest.TestCase):
     def test_declaracoes_incertas_param_antes_do_grafo(self):
         casos = (
             ("Eu sou Pessoa Exemplo e queria saber como peço uma certidão?", "Pessoa Exemplo"),
+            ("Como peço uma certidão para Íris da Silveira?", "Íris da Silveira"),
+            ("Caio Q. Imaginário precisa comparecer para tirar RG?", "Caio Q. Imaginário"),
             ("Meu endereço residencial é Praça Fictícia, posso pedir uma certidão?", "Praça Fictícia"),
-            ("Meu endereço residencial é Av. Inventada. Como peço uma certidão?", "Inventada"),
+            ("Meu endereço residencial é Av. Dr. Inventada. Como peço uma certidão?", "Inventada"),
+            ("Posso usar o comprovante da Av. Imaginária, 45 para tirar RG?", "Av. Imaginária"),
+            ("Posso usar comprovante da av imaginária, 45 para tirar RG?", "av imaginária"),
+            ("Moro na R. Inventada e quero tirar RG.", "R. Inventada"),
             ("Meu endereço residencial fica na Praça Fictícia. Como peço uma certidão?", "Praça Fictícia"),
+            ("Posso usar o telefone +55 (11) 9 9999-9999 para agendar o RG?", "9999-9999"),
+            ("Posso emitir RG com exemplo [arroba] example [ponto] org?", "example"),
+            ("Posso pedir a segunda via do RG 12.345.678-X?", "12.345.678-X"),
+            ("RG: AB-234-X. Como peço a segunda via?", "AB-234-X"),
             ("Meu filho, nascido em 9.6.2014, precisa comparecer para tirar RG?", "9.6.2014"),
             ("Meu filho, nascido em nove de junho de 2014, precisa tirar RG?", "nove de junho de 2014"),
             ("Minha data de nascimento é doze de março. Como peço uma certidão?", "doze de março"),
@@ -149,16 +179,22 @@ class TestAgente(unittest.TestCase):
             invocar.assert_not_called()
         self.classificador.assert_not_called()
 
-    def test_pergunta_generica_sobre_data_de_nascimento_ainda_pode_ser_classificada(self):
+    def test_perguntas_genericas_sobre_requisitos_ainda_podem_ser_classificadas(self):
         self.classificador.return_value = intencao("certidoes", ["documentos"])
         for pergunta in (
             "A data de nascimento é necessária para pedir a certidão?",
             "Preciso informar a data de nascimento para solicitar uma certidão?",
+            "Para pedir certidão, o e-mail é obrigatório?",
+            "E-mail: preciso informar para pedir uma certidão?",
+            "CPF: preciso apresentar para pedir uma certidão?",
+            "Preciso apresentar Comprovante de Residência para solicitar uma certidão?",
         ):
             with self.subTest(pergunta=pergunta):
+                self.classificador.reset_mock()
                 resultado = self.perguntar(pergunta)
                 self.assertEqual(resultado["estado"], "orientacao")
                 self.assertFalse(resultado["alerta_privacidade"])
+                self.classificador.assert_called_once()
                 self.assertEqual(self.classificador.call_args.args[1], pergunta)
 
     def test_agendamento_e_situacao_cadastral_respondem_sem_enviar_dados(self):
@@ -216,7 +252,7 @@ class TestAgente(unittest.TestCase):
                     resultado = self.perguntar(f"Eu sou {dado}. {pergunta}")
                 fluxo.assert_called_once_with({"pergunta": pergunta_limpa, "alerta": True})
                 self.classificador.assert_called_once()
-                self.assertEqual(self.classificador.call_args.args[1], pergunta_limpa)
+                self.assertEqual(self.classificador.call_args.args[1], pergunta)
                 self.assertEqual(estados_finais[-1]["pergunta"], "")
                 self.assertNotIn(dado, str(estados_finais[-1]))
                 self.assertNotIn(dado, str(resultado))
@@ -241,7 +277,13 @@ class TestAgente(unittest.TestCase):
         self.classificador.return_value = intencao("cnh", ["validade"])
         for idade, duracao in ((49, "10 anos"), (50, "5 anos"), (69, "5 anos"), (70, "3 anos")):
             with self.subTest(idade=idade):
-                resultado = self.perguntar(f"Tenho {idade} anos. Quanto vale a CNH renovada?")
+                self.classificador.reset_mock()
+                pergunta = f"Tenho {idade} anos. Quanto vale a CNH renovada?"
+                resultado = self.perguntar(pergunta)
+                self.assertEqual(resultado["estado"], "orientacao")
+                self.assertFalse(resultado["alerta_privacidade"])
+                self.classificador.assert_called_once()
+                self.assertEqual(self.classificador.call_args.args[1], pergunta)
                 self.assertIn(duracao, resultado["mensagem"])
                 self.assertNotIn("\n-", resultado["mensagem"])
 
