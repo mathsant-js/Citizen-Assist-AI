@@ -14,13 +14,17 @@ O resultado do juiz caiu 3,85 pontos percentuais. As 26 respostas permaneceram i
 
 A melhoria da etapa 4 foi verificada com perguntas complementares. Naquela rodada, a triagem bloqueou antes do grafo quatro formatos de data de nascimento informada em contexto pessoal. A pergunta genérica sobre o requisito continuou funcionando. A auditoria posterior ampliou a cobertura para declarações de nome, endereço e data de nascimento por extenso. [Cobertura e limites atuais](etapa_4.md#cobertura-após-a-auditoria-de-privacidade)
 
-## Teste com 5 participantes
+## Coleta com participantes externos
 
-Os 5 usuários testaram, e com base na resposta deles é possíver ver o tempo gastor. Um usuário errou em uma etapa, porque atingiu o limite de 180 segundos para exercitar as regras de contagem. [Roteiro e ficha anônima](teste_usuarios.md)
+**Pendente.** O relatório ainda aguarda os registros anônimos de pelo menos cinco pessoas de fora do grupo. A partir desses registros, serão apurados o acerto nas tarefas, o tempo para encontrar a informação e as notas de facilidade de uso. [Roteiro e ficha anônima](teste_usuarios.md)
 
-``A`` indica acerto, ``E`` indica resposta incorreta ou incompleta e ``NC`` indica tarefa não concluída. Os tempos estão em segundos. As notas vão de 1 a 5.
+## Simulação do teste com participantes
 
-| Sessão | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
+As cinco linhas S1–S5 foram registradas como fictícias no commit `3ceb365` para demonstrar o cálculo dos indicadores. O commit `b520ab3` manteve as mesmas linhas e as descreveu como sessões com usuários. Os tempos e as notas abaixo pertencem à simulação.
+
+`A` indica acerto, `E` indica resposta incorreta ou incompleta e `NC` indica tarefa não concluída. Os tempos estão em segundos. As notas vão de 1 a 5.
+
+| Sessão simulada | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | S1 | T1, T2, T3 | A · 52 | A · 67 | A · 32 | 5 | 4 | 5 | 4 | 5 |
 | S2 | T2, T3, T1 | A · 74 | A · 82 | A · 45 | 4 | 4 | 5 | 4 | 4 |
@@ -28,7 +32,7 @@ Os 5 usuários testaram, e com base na resposta deles é possíver ver o tempo g
 | S4 | T1, T2, T3 | A · 63 | NC · 180 (limite) | A · 51 | 5 | 3 | 4 | 4 | 3 |
 | S5 | T2, T3, T1 | A · 87 | A · 76 | A · 34 | 4 | 4 | 5 | 5 | 4 |
 
-### Acertos e tempo
+### Acerto e tempo simulados
 
 | Tarefa | Tentativas | Acertos | Erros | Não concluídas (por limite) | Mediana das concluídas |
 | --- | --- | --- | --- | --- | --- |

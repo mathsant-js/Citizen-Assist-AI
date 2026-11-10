@@ -82,13 +82,7 @@ Convidar pelo menos **cinco pessoas de fora do grupo**. Aplicar as mesmas três 
 
 Cronometrar cada tarefa da leitura da instrução até a pessoa informar a resposta que encontrou. Comparar o resultado com a ficha correspondente e marcar acerto, erro ou tarefa não concluída. Usar um limite proposto de três minutos por tarefa e registrar os tempos-limite separadamente dos tempos das tarefas concluídas. Guardar apenas tempos, resultados e notas, sem nomes, contatos, gravações ou histórico de perguntas.
 
-Aplicar cinco afirmações em escala de 1 (discordo totalmente) a 5 (concordo totalmente).
-
-1. Foi fácil encontrar a categoria de que eu precisava.
-2. Foi fácil fazer uma pergunta no campo de texto.
-3. Entendi a orientação recebida.
-4. Foi fácil localizar a ficha citada e sua data.
-5. Consegui completar as tarefas sem ajuda.
+Aplicar as cinco perguntas de facilidade de uso em escala de 1 (muito difícil) a 5 (muito fácil) após as tarefas. [Questionário e ficha anônima](teste_usuarios.md#questionário)
 
 Para que todos possam avaliar os dois caminhos, incluir nas instruções a utilização do menu em pelo menos uma tarefa e da pergunta livre em pelo menos outra.
 
@@ -96,7 +90,7 @@ Para que todos possam avaliar os dois caminhos, incluir nas instruções a utili
 | --- | --- |
 | Acerto das orientações | Acertos sobre 26 e percentual antes e depois, com conferência manual da amostra. Apresentar separadamente os acertos das tarefas com usuários. |
 | Tempo para encontrar a informação | Mediana do tempo por tarefa entre as tentativas concluídas, acompanhada do número de tentativas e de tarefas não concluídas. |
-| Facilidade de utilização | Nota média de 1 a 5 por afirmação e média geral, com quantidade de respostas. |
+| Facilidade de utilização | Nota média de 1 a 5 por pergunta e média geral, com quantidade de respostas. |
 
 ## Checklist da entrega acadêmica
 
@@ -105,6 +99,7 @@ Para que todos possam avaliar os dois caminhos, incluir nas instruções a utili
 - [x] Diagrama Mermaid exportado como SVG e exibido no README. [Arquitetura](../README.md#como-funciona) · [SVG](arquitetura.svg)
 - [x] Explicação de como as fichas foram carregadas, organizadas, recuperadas e citadas. [Arquitetura](../README.md#como-funciona)
 - [x] Pipeline do LLM as a Judge e notebook executado com as 26 linhas das duas rodadas, régua, conferência manual e comparação. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação](../avaliacao/reavaliacao.ipynb)
-- [ ] Relatório do teste com usuários com acerto, tempo e facilidade de uso. Os indicadores simulados estão no [relatório da etapa 5](etapa_5.md#simulação-do-teste-com-participantes). A coleta com participantes externos está pendente.
+- [x] Roteiro de três tarefas, questionário de cinco perguntas, ficha anônima e convite preparados. [Material para aplicação](teste_usuarios.md)
+- [ ] Coleta com pelo menos cinco pessoas de fora do grupo e relatório de acerto, tempo e facilidade de uso. A conclusão depende dos registros anônimos das sessões reais. A [simulação](etapa_5.md#simulação-do-teste-com-participantes) demonstra o cálculo e a [automação no navegador](etapa_5.md#execução-automatizada-das-três-tarefas-em-07112026) documenta a execução técnica das tarefas.
 - [x] Justificativa das escolhas de framework, agente único e modelos, com a divisão entre IA e lógica de programação. [Arquitetura](../README.md#como-funciona)
 - [x] Registro da falha analisada, da melhoria implementada e das limitações observadas. [Etapa 4](etapa_4.md)
