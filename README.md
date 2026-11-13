@@ -17,13 +17,13 @@ Se o comando `py` estiver indisponível, use o executável do Python 3.12 instal
 
 Para habilitar perguntas livres, copie `.env.example` para `.env` na raiz e preencha `OLLAMA_API_KEY` com a sua chave do Ollama Cloud. Se o servidor já tiver a variável de ambiente `OLLAMA_API_KEY` configurada, ele a usará. Guarde a chave no servidor. O menu funciona mesmo sem acesso ao Ollama.
 
+O **Ollama Cloud passou a cobrar pelo uso de todos os modelos hospedados**. As perguntas livres e a reexecução da avaliação com os modelos na nuvem exigem créditos de uso na conta vinculada à chave. [Preços do Ollama Cloud](https://ollama.com/pricing)
+
 ```powershell
 .\.venv\Scripts\python.exe -m citizen_assist.web
 ```
 
-Abra [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no navegador do mesmo computador. Selecione **RG · Documentos da segunda via** e confira a lista de documentos, a FC-01 e a data de verificação. Depois, pergunte **Como solicito um intérprete de Libras?**. Confira o agendamento com 48 horas de antecedência, a FC-07 e a data de verificação. As duas fichas estão datadas de 01/10/2026. O aviso de protótipo educacional fica no rodapé. Use **Ctrl+C** no terminal para encerrar.
-
-Se a pergunta livre retornar uma mensagem de indisponibilidade, confira a chave e o acesso da conta ao modelo no Ollama Cloud. O menu continua disponível durante falhas do serviço.
+Abra [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no navegador do mesmo computador. Use **Ctrl+C** no terminal para encerrar.
 
 Para executar os testes automatizados com os modelos simulados:
 
