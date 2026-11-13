@@ -1,6 +1,14 @@
 # Citizen Assist AI
 
-**Integrantes:** Davi Teodoro Novais, Lourenço Borges da Silva e Matheus Jorge Santana.
+**Integrantes**
+
+| Nome completo            |   RM   |
+|------------------------- |--------|
+| Davi Teodoro Novais      | 571022 | 
+| Lourenço Borges da Silva | 569515 |
+| Matheus Jorge Santana    | 574166 |
+
+**Turma: 1CCPQ**
 
 Protótipo educacional em português que orienta sobre documentos pessoais com base nas fichas fictícias da Central do Cidadão de Aurora. A interface oferece um menu por assunto e um campo para perguntas livres.
 
