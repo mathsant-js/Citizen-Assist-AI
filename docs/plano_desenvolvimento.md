@@ -100,6 +100,6 @@ Para que todos possam avaliar os dois caminhos, incluir nas instruções a utili
 - [x] Explicação de como as fichas foram carregadas, organizadas, recuperadas e citadas. [Arquitetura](../README.md#como-funciona)
 - [x] Pipeline do LLM as a Judge e notebook executado com as 26 linhas das duas rodadas, régua, conferência manual e comparação. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação](../avaliacao/reavaliacao.ipynb)
 - [x] Roteiro de três tarefas, questionário de cinco perguntas, ficha anônima e convite preparados. [Material para aplicação](teste_usuarios.md)
-- [x] Coleta com pelo menos cinco pessoas de fora do grupo e relatório de acerto, tempo e facilidade de uso. A conclusão depende dos registros anônimos das sessões reais. A [simulação](etapa_5.md#simulação-do-teste-com-participantes) demonstra o cálculo e a [automação no navegador](etapa_5.md#execução-automatizada-das-três-tarefas-em-07112026) documenta a execução técnica das tarefas.
+- [x] Coleta com cinco pessoas de fora do grupo em 12/11/2026, conforme o registro da equipe. O relatório inclui acertos, tempos, notas de facilidade de uso e o commit informado para as sessões. [Relatório da coleta](etapa_5.md#coleta-com-participantes-externos)
 - [x] Justificativa das escolhas de framework, agente único e modelos, com a divisão entre IA e lógica de programação. [Arquitetura](../README.md#como-funciona)
 - [x] Registro da falha analisada, da melhoria implementada e das limitações observadas. [Etapa 4](etapa_4.md)

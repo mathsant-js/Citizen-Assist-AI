@@ -35,6 +35,8 @@ A suíte local passou com 28 testes. Os testes conferem a mensagem exata recebid
 
 A triagem usa padrões de texto. Nomes de uma palavra, nomes sem rótulo inteiramente em minúsculas ou maiúsculas, endereços sem indícios de logradouro, datas sem contexto de nascimento e grafias fora dos padrões podem passar. Expressões legítimas com iniciais maiúsculas também podem parecer nomes. A separação de declarações depende da pontuação e, para nomes, endereços e datas rotuladas, do início reconhecível da pergunta de serviço. Entradas com várias declarações consecutivas ou abreviações internas como `Av. Dr.` podem exigir reformulação.
 
+Na revisão de 12/11/2026, a pergunta sintética “pessoa imaginaria, como solicito um intérprete de Libras?” chegou intacta à mensagem enviada ao transporte simulado do Ollama e recebeu orientação sem alerta de privacidade.
+
 ## Rodada oficial de 07/11/2026
 
 A rodada da versão preparada para entrega está registrada separadamente no [notebook da versão final](../avaliacao/reavaliacao_final.ipynb) e na [comparação da etapa 5](etapa_5.md#acerto-das-orientações).
@@ -58,7 +60,7 @@ O resultado bruto caiu 3,85 pontos percentuais. O único veredito que mudou foi 
 2. Abra uma cópia de [reavaliacao.ipynb](../avaliacao/reavaliacao.ipynb) na pasta `avaliacao`, selecione o kernel de `.venv` e execute as células. Mantenha `linha_base.ipynb` ao lado da cópia, pois o notebook usa as saídas já gravadas na linha de base.
 3. Confira novamente a amostra manual fixa. As anotações no notebook executado descrevem a rodada registrada aqui.
 
-Para repetir a rodada da versão final, siga o mesmo procedimento com uma cópia de [reavaliacao_final.ipynb](../avaliacao/reavaliacao_final.ipynb). Para conferir o conjunto diretamente com o enunciado, mantenha `1CC-Citizen_Assist_AI(2).docx` em Downloads ou indique o caminho do arquivo na variável de ambiente `CITIZEN_ENUNCIADO` antes de abrir o Jupyter. Refaça a conferência manual da amostra e das divergências com as novas respostas.
+Para repetir a rodada da versão final, siga o mesmo procedimento com uma cópia de [reavaliacao_final.ipynb](../avaliacao/reavaliacao_final.ipynb) em um clone Git do repositório. O notebook usa `git` para registrar o commit e verificar a ausência de alterações locais no código e nos dados avaliados. Para conferir o conjunto diretamente com o enunciado, mantenha `1CC-Citizen_Assist_AI(2).docx` em Downloads ou indique o caminho do arquivo na variável de ambiente `CITIZEN_ENUNCIADO` antes de abrir o Jupyter. Refaça a conferência manual da amostra e das divergências com as novas respostas.
 
 Para rodar os testes automatizados com os modelos simulados:
 

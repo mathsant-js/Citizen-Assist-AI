@@ -21,7 +21,9 @@ Para habilitar perguntas livres, copie `.env.example` para `.env` na raiz e pree
 .\.venv\Scripts\python.exe -m citizen_assist.web
 ```
 
-Abra [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no navegador do mesmo computador. Selecione **RG** no menu e procure os documentos da segunda via. Depois, pergunte **Como solicito um intérprete de Libras?**. Confira o agendamento com 48 horas de antecedência e a citação da FC-07, datada de 01/10/2026. Use **Ctrl+C** no terminal para encerrar.
+Abra [http://127.0.0.1:8000/](http://127.0.0.1:8000/) no navegador do mesmo computador. Selecione **RG · Documentos da segunda via** e confira a lista de documentos, a FC-01 e a data de verificação. Depois, pergunte **Como solicito um intérprete de Libras?**. Confira o agendamento com 48 horas de antecedência, a FC-07 e a data de verificação. As duas fichas estão datadas de 01/10/2026. O aviso de protótipo educacional fica no rodapé. Use **Ctrl+C** no terminal para encerrar.
+
+Se a pergunta livre retornar uma mensagem de indisponibilidade, confira a chave e o acesso da conta ao modelo no Ollama Cloud. O menu continua disponível durante falhas do serviço.
 
 Para executar os testes automatizados com os modelos simulados:
 

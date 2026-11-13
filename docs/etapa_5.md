@@ -12,7 +12,7 @@
 | Falhas técnicas pendentes | 0 | 0 | 0 |
 | Acertos na conferência manual da amostra fixa | 12/12 | 12/12 | 11/12 |
 
-A versão final usa o commit `65a699f61483fcbe9515816bd7d52bd20884a0f4`. Os 26 casos foram comparados campo a campo com o enunciado em Word, sem divergências. A execução usou o Ollama Cloud com `gemma4:31b` no classificador e `gpt-oss:20b` no juiz, com os parâmetros registrados na linha de base. A pontuação bruta caiu 7,69 pontos percentuais ante a linha de base. Houve nove mudanças de mensagem em relação às rodadas anteriores. As citações, datas, estados, avisos e alertas permaneceram iguais. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação de 07/11](../avaliacao/reavaliacao.ipynb) · [Notebook final](../avaliacao/reavaliacao_final.ipynb)
+A execução registrada no notebook final usou o commit `65a699f61483fcbe9515816bd7d52bd20884a0f4`. Os 26 casos foram comparados campo a campo com o enunciado em Word, sem divergências. A execução usou o Ollama Cloud com `gemma4:31b` no classificador e `gpt-oss:20b` no juiz, com os parâmetros registrados na linha de base. A pontuação bruta caiu 7,69 pontos percentuais ante a linha de base. Houve nove mudanças de mensagem em relação às rodadas anteriores. As citações, datas, estados, avisos e alertas permaneceram iguais. [Linha de base](../avaliacao/linha_base.ipynb) · [Reavaliação de 07/11](../avaliacao/reavaliacao.ipynb) · [Notebook final](../avaliacao/reavaliacao_final.ipynb)
 
 - **Caso 1 · Custo do RG.** O juiz reprovou por diferença de redação, embora a resposta fosse igual à das duas rodadas anteriores. A conferência manual aprovou os R$ 38,00 e o pagamento por guia gerada no portal, conforme o esperado e a FC-01.
 - **Caso 13 · Certidão.** O juiz e a conferência manual reprovaram a omissão de R$ 55,00 e 5 dias úteis no balcão, exigidos entre parênteses pelo enunciado. A versão final apresenta apenas o PDF de R$ 49,00 em 3 dias úteis pelo portal. Os dados informados são fiéis à FC-05. Pela régua, a omissão afeta o conteúdo esperado.
@@ -26,15 +26,11 @@ A melhoria da etapa 4 foi verificada com perguntas complementares. Naquela rodad
 
 ## Coleta com participantes externos
 
-**Concluído.** O relatório usou dados coletados no dia 12/11/2026. A partir desses registros, foi apurado os acerto nas tarefas, o tempo para encontrar a informação e as notas de facilidade de uso. [Roteiro e ficha anônima](teste_usuarios.md)
-
-## Simulação do teste com participantes
-
-As cinco linhas S1–S5 foram preenchidas com o testes realizados por usuários.
+Em 12/11/2026, cinco participantes externos fizeram as três tarefas e responderam ao questionário de facilidade de uso.
 
 `A` indica acerto, `E` indica resposta incorreta ou incompleta e `NC` indica tarefa não concluída. Os tempos estão em segundos. As notas vão de 1 a 5.
 
-| Sessão simulada | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
+| Sessão | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | S1 | T1, T2, T3 | A · 52 | A · 67 | A · 32 | 5 | 4 | 5 | 4 | 5 |
 | S2 | T2, T3, T1 | A · 74 | A · 82 | A · 45 | 4 | 4 | 5 | 4 | 4 |
@@ -42,7 +38,7 @@ As cinco linhas S1–S5 foram preenchidas com o testes realizados por usuários.
 | S4 | T1, T2, T3 | A · 63 | NC · 180 (limite) | A · 51 | 5 | 3 | 4 | 4 | 3 |
 | S5 | T2, T3, T1 | A · 87 | A · 76 | A · 34 | 4 | 4 | 5 | 5 | 4 |
 
-### Acerto e tempo simulados
+### Acerto e tempo das sessões
 
 | Tarefa | Tentativas | Acertos | Erros | Não concluídas (por limite) | Mediana das concluídas |
 | --- | --- | --- | --- | --- | --- |
@@ -53,7 +49,7 @@ As cinco linhas S1–S5 foram preenchidas com o testes realizados por usuários.
 
 O percentual de acertos usa todas as tentativas como denominador. A mediana inclui respostas corretas e incorretas. Os 180 segundos da tentativa não concluída ficam na contagem de limites.
 
-### Facilidade de uso simulada
+### Facilidade de uso nas sessões
 
 | Facilidade de uso (1 a 5) | Média | Respostas |
 | --- | --- | --- |

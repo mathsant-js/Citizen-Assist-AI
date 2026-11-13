@@ -1,6 +1,7 @@
 # Roteiro do teste com participantes
 
-**Coleta externa concluída.**  Cinco pessoas de fora do grupo testaram o projeto. 15 minutos para cada sessão. [Convite](#convite-para-enviar) · [Instalação](../README.md#instalação-e-execução-no-windows)
+**Coleta externa de 12/11/2026.** Cinco pessoas de fora do grupo testaram o protótipo. 
+[Resultados](#resultados-das-sessões) · [Instalação](../README.md#instalação-e-execução-no-windows)
 
 ## Instruções para ler em cada sessão
 
@@ -39,7 +40,7 @@ Use a mesma escala para todas as perguntas. **1** muito difícil, **2** difícil
 
 Use uma linha por sessão real. Nas colunas das tarefas, anote o resultado e o tempo em segundos, por exemplo `A · 52 s` ou `NC · 180 s (limite)`. Nas últimas cinco colunas, registre a nota ou `—`. Identifique a sessão apenas pelo número, sem guardar vínculo com nomes ou contatos, gravações ou histórico de perguntas.
 
-| Sessão simulada | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
+| Sessão | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | S1 | T1, T2, T3 | A · 52 | A · 67 | A · 32 | 5 | 4 | 5 | 4 | 5 |
 | S2 | T2, T3, T1 | A · 74 | A · 82 | A · 45 | 4 | 4 | 5 | 4 | 4 |
@@ -47,7 +48,7 @@ Use uma linha por sessão real. Nas colunas das tarefas, anote o resultado e o t
 | S4 | T1, T2, T3 | A · 63 | NC · 180 (limite) | A · 51 | 5 | 3 | 4 | 4 | 3 |
 | S5 | T2, T3, T1 | A · 87 | A · 76 | A · 34 | 4 | 4 | 5 | 5 | 4 |
 
-## Resultados das sessões simuladas
+## Resultados das sessões
 
 ### Acerto e tempo por tarefa
 
