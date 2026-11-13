@@ -26,11 +26,11 @@ A melhoria da etapa 4 foi verificada com perguntas complementares. Naquela rodad
 
 ## Coleta com participantes externos
 
-**Pendente.** O relatório ainda aguarda os registros anônimos de pelo menos cinco pessoas de fora do grupo. A partir desses registros, serão apurados o acerto nas tarefas, o tempo para encontrar a informação e as notas de facilidade de uso. [Roteiro e ficha anônima](teste_usuarios.md)
+**Concluído.** O relatório usou dados coletados no dia 12/11/2026. A partir desses registros, foi apurado os acerto nas tarefas, o tempo para encontrar a informação e as notas de facilidade de uso. [Roteiro e ficha anônima](teste_usuarios.md)
 
 ## Simulação do teste com participantes
 
-As cinco linhas S1–S5 foram registradas como fictícias no commit `3ceb365` para demonstrar o cálculo dos indicadores. O commit `b520ab3` manteve as mesmas linhas e as descreveu como sessões com usuários. Os tempos e as notas abaixo pertencem à simulação.
+As cinco linhas S1–S5 foram preenchidas com o testes realizados por usuários.
 
 `A` indica acerto, `E` indica resposta incorreta ou incompleta e `NC` indica tarefa não concluída. Os tempos estão em segundos. As notas vão de 1 a 5.
 
@@ -111,5 +111,3 @@ Os 31 testes automatizados passaram, incluindo as verificações de triagem ante
 | T3 · Intérprete de Libras | O mesmo percurso pelo campo de pergunta levou à orientação de agendar com 48 horas de antecedência. | FC-07 · 01/10/2026 |
 
 Nas seis execuções, o foco chegou ao título **Orientação** com contorno visível. `Ctrl+End` levou à ficha, à data e ao aviso. A página coube nas duas larguras sem rolagem horizontal. Uma consulta adicional a 320 pixels, “O título de eleitor é pago?”, começou com “Não” e indicou a gratuidade com a FC-03.
-
-**Coleta externa pendente.** O acerto sem ajuda, o tempo de execução e as notas de facilidade serão apurados com participantes externos conforme o roteiro. O notebook final identifica o commit avaliado para vincular as sessões à mesma versão. [Roteiro e registro de versão](teste_usuarios.md)

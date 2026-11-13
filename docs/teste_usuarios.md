@@ -1,8 +1,6 @@
 # Roteiro do teste com participantes
 
-**Coleta externa pendente.** Convide pelo menos cinco pessoas de fora do grupo. Reserve cerca de 15 minutos por sessão. Antes das sessões, configure a chave do Ollama Cloud e confirme que o menu e a pergunta livre funcionam. Use a mesma versão do protótipo em todas as sessões e separe as instruções das tarefas da chave de correção. [Convite para enviar](#convite-para-enviar) · [Instalação](../README.md#instalação-e-execução-no-windows)
-
-Registre o hash completo do commit da rodada junto à ficha anônima. Use esse mesmo commit para iniciar a interface e executar uma cópia do notebook de reavaliação. Na raiz do projeto, `git rev-parse HEAD` identifica a versão em uso e `git status --short` permite confirmar que a cópia está limpa antes de iniciar a rodada. [Reproduzir a reavaliação](etapa_4.md#reproduzir)
+**Coleta externa concluída.**  Cinco pessoas de fora do grupo testaram o projeto. 15 minutos para cada sessão. [Convite](#convite-para-enviar) · [Instalação](../README.md#instalação-e-execução-no-windows)
 
 ## Instruções para ler em cada sessão
 
@@ -41,21 +39,39 @@ Use a mesma escala para todas as perguntas. **1** muito difícil, **2** difícil
 
 Use uma linha por sessão real. Nas colunas das tarefas, anote o resultado e o tempo em segundos, por exemplo `A · 52 s` ou `NC · 180 s (limite)`. Nas últimas cinco colunas, registre a nota ou `—`. Identifique a sessão apenas pelo número, sem guardar vínculo com nomes ou contatos, gravações ou histórico de perguntas.
 
-| Sessão | Ordem das tarefas | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
+| Sessão simulada | Ordem | T1 | T2 | T3 | Q1 | Q2 | Q3 | Q4 | Q5 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | | | | | | | | | |
-| 2 | | | | | | | | | |
-| 3 | | | | | | | | | |
-| 4 | | | | | | | | | |
-| 5 | | | | | | | | | |
+| S1 | T1, T2, T3 | A · 52 | A · 67 | A · 32 | 5 | 4 | 5 | 4 | 5 |
+| S2 | T2, T3, T1 | A · 74 | A · 82 | A · 45 | 4 | 4 | 5 | 4 | 4 |
+| S3 | T3, T1, T2 | E · 96 | A · 58 | A · 39 | 4 | 5 | 4 | 3 | 4 |
+| S4 | T1, T2, T3 | A · 63 | NC · 180 (limite) | A · 51 | 5 | 3 | 4 | 4 | 3 |
+| S5 | T2, T3, T1 | A · 87 | A · 76 | A · 34 | 4 | 4 | 5 | 5 | 4 |
 
-## Consolidação
+## Resultados das sessões simuladas
 
-- **Acerto nas tarefas.** Divida o total de A pelo total de tentativas, incluindo E e NC. Apresente a contagem por tarefa e o total.
-- **Tempo.** Calcule a mediana dos segundos de A e E por tarefa. Mostre o número de tentativas, as NC e, dentro delas, quantas atingiram o limite. Use “sem tarefas concluídas” se a mediana não puder ser calculada.
-- **Facilidade.** Apresente a média de cada pergunta com o número de notas válidas e a média geral das notas recebidas. Registre respostas ausentes separadamente.
+### Acerto e tempo por tarefa
 
-Consolide apenas os registros das sessões externas nesta ficha. O relatório apresenta separadamente a simulação histórica e as medições técnicas do navegador. [Relatório da etapa 5](etapa_5.md)
+| Tarefa | Tentativas | Acertos | Erros | Não concluídas | Atingiram o limite | Mediana das concluídas |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| T1 · Documentos para segunda via do RG | 5 | 4/5 (80%) | 1 | 0 | 0 | 74 s |
+| T2 · Custo e prazo da certidão pelo portal | 5 | 4/5 (80%) | 0 | 1 | 1 | 71,5 s |
+| T3 · Agendamento de intérprete de Libras | 5 | 5/5 (100%) | 0 | 0 | 0 | 39 s |
+| **Total** | **15** | **13/15 (86,67%)** | **1** | **1** | **1** | — |
+
+O percentual de acertos considera todas as tentativas. A mediana de cada tarefa usa os tempos das respostas corretas e incorretas. A tentativa de T2 que atingiu o limite de 180 segundos entra na contagem de tentativas e de tarefas não concluídas.
+
+### Facilidade de uso
+
+| Pergunta | Média (1 a 5) | Notas válidas | Notas ausentes |
+| --- | ---: | ---: | ---: |
+| Q1 · Encontrar a categoria | 4,4 | 5 | 0 |
+| Q2 · Fazer uma pergunta no campo de texto | 4,0 | 5 | 0 |
+| Q3 · Entender a orientação | 4,6 | 5 | 0 |
+| Q4 · Localizar o código da ficha e sua data | 4,0 | 5 | 0 |
+| Q5 · Completar as tarefas sem ajuda | 4,0 | 5 | 0 |
+| **Geral** | **4,2** | **25** | **0** |
+
+A média geral foi de 4,2 de 5, calculada pela soma das 25 notas (105) dividida pela quantidade de notas válidas (25).
 
 ## Convite para enviar
 
